@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Button } from "@/ui/button";
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
           <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
             Welcome to MoCodes. Let&apos;s learn NextJS in 2026
           </h1>
+          <Button>Get started</Button>
           <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
             Looking for a starting point or more instructions? Head over to{" "}
             <a
