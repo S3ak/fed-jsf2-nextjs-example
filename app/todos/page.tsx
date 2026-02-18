@@ -1,16 +1,10 @@
-import TodoListItem from "@/components/todo-list-item/TodoListItem";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+"use client";
+
+import TodoList from "@/components/todo-list/TodoList";
+import { Todo } from "@/lib/types/todo";
 import Link from "next/link";
 
-const mockTodos = [
+const mockTodos: Todo[] = [
   {
     id: 1,
     title: "Finish Next.js routing lesson",
@@ -46,7 +40,7 @@ const mockTodos = [
     priority: "Low",
     completed: true,
   },
-] as const;
+];
 
 export default function TodoPage() {
   return (
@@ -92,16 +86,9 @@ export default function TodoPage() {
             </span>
           </div>
 
-          <ul className="mt-4 space-y-3">
-            {mockTodos.map(({ id, title, priority, dueDate }) => (
-              <TodoListItem
-                key={id}
-                title={title}
-                priority={priority}
-                dueDate={dueDate}
-              />
-            ))}
-          </ul>
+          <div className="mt-4 space-y-3">
+            <TodoList todos={mockTodos} />
+          </div>
         </section>
       </main>
     </div>

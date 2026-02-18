@@ -1,5 +1,6 @@
 import React from "react";
 import { DateTime } from "luxon";
+import { Todo } from "@/lib/types/todo";
 
 import {
   Card,
@@ -10,13 +11,7 @@ import {
   CardTitle,
 } from "../ui/card";
 
-type IProps = {
-  title: string;
-  priority: string;
-  dueDate: string;
-};
-
-export default function TodoListItem({ title, priority, dueDate }: IProps) {
+export default function TodoListItem({ title, priority, dueDate }: Todo) {
   const formattedDateTime = DateTime.fromISO(dueDate);
 
   return (
