@@ -20,7 +20,8 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@/components": ["./app/components/ui"]
+      "@/components/*": ["./components"],
+      "@/ui/*": ["./components/ui/*"]
     }
   },
   "include": [
