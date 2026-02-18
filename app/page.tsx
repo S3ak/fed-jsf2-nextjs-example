@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Button } from "@/ui/button";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -18,6 +19,7 @@ export default function Home() {
             Welcome to MoCodes. Let&apos;s learn NextJS in 2026
           </h1>
           <Button>Get started</Button>
+          <Link href="/todos">Todos</Link>
           <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
             Looking for a starting point or more instructions? Head over to{" "}
             <a
