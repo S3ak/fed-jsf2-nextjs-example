@@ -38,7 +38,12 @@ export default defineConfig({
     trace: "on-first-retry",
     baseURL: baseURL,
   },
-
+  webServer: {
+    command: "npm run build && npm run start",
+    url: baseURL,
+    timeout: 120 * 1000,
+    reuseExistingServer: !process.env.CI,
+  },
   /* Configure projects for major browsers */
   projects: [
     {
