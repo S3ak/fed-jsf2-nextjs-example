@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import TodoListItem from "../todo-list-item/TodoListItem";
 import { Todo } from "@/lib/types/todo";
 import { Card, CardFooter, CardHeader } from "../ui/card";
+import { Skeleton } from "../ui/skeleton";
 
 type IProps = {
   todos: Todo[];
@@ -55,11 +56,11 @@ export function TodoListSkeleton() {
       {Array.from({ length: 3 }).map((_, index) => (
         <Card key={index} className="gap-4">
           <CardHeader className="gap-2">
-            <div className="h-5 w-1/2 animate-pulse rounded-md bg-muted" />
-            <div className="h-4 w-1/4 animate-pulse rounded-md bg-muted" />
+            <Skeleton className="h-5 w-1/2" />
+            <Skeleton className="h-4 w-1/4" />
           </CardHeader>
           <CardFooter>
-            <div className="h-4 w-1/3 animate-pulse rounded-md bg-muted" />
+            <Skeleton className="h-4 w-1/3" />
           </CardFooter>
         </Card>
       ))}

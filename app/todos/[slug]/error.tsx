@@ -1,21 +1,19 @@
-import TodoList, { TodoListSkeleton } from "@/components/todo-list/TodoList";
-import { API_URL } from "@/lib/constants";
-import { Todo } from "@/lib/types/todo";
+"use client"; // Error boundaries must be Client Components
+
 import Link from "next/link";
+import { useEffect } from "react";
 
-export default async function TodosPage() {
-  const res = await fetch(`${API_URL}/todos`);
-
-  if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch data");
-  }
-
-  const {
-    data: todos,
-  }: {
-    data: Todo[];
-  } = await res.json();
+export default function Error({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  useEffect(() => {
+    // Log the error to an error reporting service
+    console.error(error);
+  }, [error]);
 
   return (
     <div className="min-h-screen bg-zinc-50 px-4 py-10 dark:bg-black sm:px-6 lg:px-8">
@@ -30,7 +28,7 @@ export default async function TodosPage() {
 
           <div className="space-y-2">
             <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-4xl">
-              Todos
+              Something went wrong!
             </h1>
             <p className="max-w-2xl text-base text-zinc-600 dark:text-zinc-400">
               Plan your tasks and keep track of progress. Plug your todo list
@@ -56,12 +54,19 @@ export default async function TodosPage() {
               Todo list
             </h2>
             <span className="rounded-full border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
-              {todos.length} items
+              0 items
             </span>
           </div>
 
           <div className="mt-4 space-y-3">
-            <TodoList todos={todos} />
+            <button
+              onClick={
+                // Attempt to recover by trying to re-render the segment
+                () => reset()
+              }
+            >
+              Try again
+            </button>
           </div>
         </section>
       </main>

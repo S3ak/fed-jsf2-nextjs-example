@@ -5,3 +5,7 @@ export interface Todo {
   priority?: "Low" | "Medium" | "High";
   completed: boolean;
 }
+
+export interface TodoResponse {
+  data: Todo[];
+}

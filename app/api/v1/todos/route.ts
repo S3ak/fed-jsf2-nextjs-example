@@ -1,5 +1,3 @@
-export const dynamic = "force-static";
-
 import todos from "@/data/todos.json";
 
 export async function GET() {

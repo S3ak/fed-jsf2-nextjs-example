@@ -10,14 +10,17 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
+import Link from "next/link";
 
-export default function TodoListItem({ title, priority, dueDate }: Todo) {
+export default function TodoListItem({ title, priority, dueDate, id }: Todo) {
   const formattedDateTime = DateTime.fromISO(dueDate);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <Link href={`/todos/${id}`}>
+          <CardTitle>{title}</CardTitle>
+        </Link>
         <CardDescription>{priority}</CardDescription>
         <CardAction>mark as complete</CardAction>
       </CardHeader>
