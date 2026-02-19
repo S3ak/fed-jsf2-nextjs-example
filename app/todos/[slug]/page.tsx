@@ -13,11 +13,11 @@ import { API_URL } from "@/lib/constants";
 import { Todo, TodoResponse } from "@/lib/types/todo";
 
 export async function generateStaticParams() {
-  const data: TodoResponse = await fetch(`${API_URL}/todos`).then((res) =>
+  const json: TodoResponse = await fetch(`${API_URL}/todos`).then((res) =>
     res.json(),
   );
 
-  return data.data.map((todo) => ({
+  return json.data.map((todo) => ({
     slug: todo.id.toString(),
   }));
 }
@@ -37,8 +37,6 @@ export default async function TodoPage({
   }
 
   const data: Todo = await res.json();
-
-  console.log("data", data);
 
   const todoId = data.id;
   const todoTitle = data.title;
