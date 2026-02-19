@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import TodoListItem from "../todo-list-item/TodoListItem";
 import { Todo } from "@/lib/types/todo";
+import { Card, CardFooter, CardHeader } from "../ui/card";
 
 type IProps = {
   todos: Todo[];
@@ -26,6 +27,7 @@ const itemVariants = {
 };
 
 export default function TodoList({ todos = [] }: IProps) {
+  console.log("todos", todos);
   return (
     <motion.section
       className="flex flex-col gap-3"
@@ -45,5 +47,23 @@ export default function TodoList({ todos = [] }: IProps) {
         </motion.div>
       ))}
     </motion.section>
+  );
+}
+
+export function TodoListSkeleton() {
+  return (
+    <section className="flex flex-col gap-3" aria-label="Loading todos">
+      {Array.from({ length: 3 }).map((_, index) => (
+        <Card key={index} className="gap-4">
+          <CardHeader className="gap-2">
+            <div className="h-5 w-1/2 animate-pulse rounded-md bg-muted" />
+            <div className="h-4 w-1/4 animate-pulse rounded-md bg-muted" />
+          </CardHeader>
+          <CardFooter>
+            <div className="h-4 w-1/3 animate-pulse rounded-md bg-muted" />
+          </CardFooter>
+        </Card>
+      ))}
+    </section>
   );
 }

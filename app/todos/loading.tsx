@@ -1,61 +1,7 @@
-import TodoList, { TodoListSkeleton } from "@/components/todo-list/TodoList";
-import { API_URL } from "@/lib/constants";
-import { Todo } from "@/lib/types/todo";
 import Link from "next/link";
-import { Suspense } from "react";
 
-// const mockTodos: Todo[] = [
-//   {
-//     id: 1,
-//     title: "Finish Next.js routing lesson",
-//     dueDate: "2026-02-19T17:00:00.000Z",
-//     priority: "High",
-//     completed: false,
-//   },
-//   {
-//     id: 2,
-//     title: "Build todo form UI",
-//     dueDate: "2026-02-20T17:00:00.000Z",
-//     priority: "Medium",
-//     completed: false,
-//   },
-//   {
-//     id: 3,
-//     title: "Refactor button variants",
-//     dueDate: "2026-02-21T17:00:00.000Z",
-//     priority: "Low",
-//     completed: true,
-//   },
-//   {
-//     id: 4,
-//     title: "Write Playwright test for todos page",
-//     dueDate: "2026-02-22T17:00:00.000Z",
-//     priority: "High",
-//     completed: false,
-//   },
-//   {
-//     id: 5,
-//     title: "Polish dark mode spacing",
-//     dueDate: "2026-02-24T17:00:00.000Z",
-//     priority: "Low",
-//     completed: true,
-//   },
-// ];
-
-export default async function TodoPage() {
-  const res = await fetch(`${API_URL}/todos`);
-
-  if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch data");
-  }
-
-  const {
-    data: todos,
-  }: {
-    data: Todo[];
-  } = await res.json();
-
+export default function Loading() {
+  // Define the Loading UI here
   return (
     <div className="min-h-screen bg-zinc-50 px-4 py-10 dark:bg-black sm:px-6 lg:px-8">
       <main className="mx-auto flex w-full max-w-4xl flex-col gap-8">
@@ -95,14 +41,12 @@ export default async function TodoPage() {
               Todo list
             </h2>
             <span className="rounded-full border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
-              {todos.length} items
+              0 items
             </span>
           </div>
 
           <div className="mt-4 space-y-3">
-            <Suspense fallback={<TodoListSkeleton />}>
-              <TodoList todos={todos} />
-            </Suspense>
+            {/* TODO: Use skeleton layout */}
           </div>
         </section>
       </main>
