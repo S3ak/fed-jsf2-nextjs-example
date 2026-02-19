@@ -4,44 +4,6 @@ import { Todo } from "@/lib/types/todo";
 import Link from "next/link";
 import { Suspense } from "react";
 
-// const mockTodos: Todo[] = [
-//   {
-//     id: 1,
-//     title: "Finish Next.js routing lesson",
-//     dueDate: "2026-02-19T17:00:00.000Z",
-//     priority: "High",
-//     completed: false,
-//   },
-//   {
-//     id: 2,
-//     title: "Build todo form UI",
-//     dueDate: "2026-02-20T17:00:00.000Z",
-//     priority: "Medium",
-//     completed: false,
-//   },
-//   {
-//     id: 3,
-//     title: "Refactor button variants",
-//     dueDate: "2026-02-21T17:00:00.000Z",
-//     priority: "Low",
-//     completed: true,
-//   },
-//   {
-//     id: 4,
-//     title: "Write Playwright test for todos page",
-//     dueDate: "2026-02-22T17:00:00.000Z",
-//     priority: "High",
-//     completed: false,
-//   },
-//   {
-//     id: 5,
-//     title: "Polish dark mode spacing",
-//     dueDate: "2026-02-24T17:00:00.000Z",
-//     priority: "Low",
-//     completed: true,
-//   },
-// ];
-
 export default async function TodoPage() {
   const res = await fetch(`${API_URL}/todos`);
 
@@ -100,9 +62,9 @@ export default async function TodoPage() {
           </div>
 
           <div className="mt-4 space-y-3">
-            <Suspense fallback={<TodoListSkeleton />}>
-              <TodoList todos={todos} />
-            </Suspense>
+            {/* <Suspense fallback={<TodoListSkeleton />}> */}
+            <TodoList todos={todos} />
+            {/* </Suspense> */}
           </div>
         </section>
       </main>

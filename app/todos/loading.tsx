@@ -15,7 +15,7 @@ export default function Loading() {
 
           <div className="space-y-2">
             <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-4xl">
-              Todos
+              Todos (SKELETON)
             </h1>
             <p className="max-w-2xl text-base text-zinc-600 dark:text-zinc-400">
               Plan your tasks and keep track of progress. Plug your todo list

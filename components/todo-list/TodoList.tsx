@@ -27,7 +27,6 @@ const itemVariants = {
 };
 
 export default function TodoList({ todos = [] }: IProps) {
-  console.log("todos", todos);
   return (
     <motion.section
       className="flex flex-col gap-3"
