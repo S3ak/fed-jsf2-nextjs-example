@@ -1,6 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/style-utils";
 import { NewTodoFormData } from "@/lib/types/todo";
@@ -15,6 +16,8 @@ type CreateTodoFormProps = {
 export default function CreateTodoForm({
   createTodoAction,
 }: CreateTodoFormProps) {
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -36,8 +39,12 @@ export default function CreateTodoForm({
     data.append("priority", formValues.priority);
     data.append("dueDate", formValues.dueDate);
 
-    const { errors, success } = await createTodoAction(data);
-    reset();
+    const { success } = await createTodoAction(data);
+
+    if (success) {
+      reset();
+      router.refresh();
+    }
   };
 
   return (

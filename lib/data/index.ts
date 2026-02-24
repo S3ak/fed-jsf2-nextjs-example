@@ -1,3 +1,4 @@
+import { neon } from "@neondatabase/serverless";
 import { API_URL } from "../constants";
 
 export async function fetchTodos() {
@@ -19,4 +20,13 @@ export async function fetchTodos() {
     console.error("API Error:", error);
     throw new Error("Failed to fetch the todos");
   }
+}
+
+async function _demoCreateServerAction(formData: FormData) {
+  "use server";
+  // Connect to the Neon database
+  const sql = neon(`${process.env.DATABASE_URL}`);
+  const title = formData.get("title");
+  // Insert the comment from the form into the Postgres database
+  await sql("INSERT INTO todos (todo) VALUES ($1)", [title]);
 }
