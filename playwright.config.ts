@@ -51,7 +51,7 @@ export default defineConfig({
       ...process.env,
       NEXT_PUBLIC_API_MOCKING: isGithubCi
         ? "enabled"
-        : process.env.NEXT_PUBLIC_API_MOCKING,
+        : process.env.NEXT_PUBLIC_API_MOCKING || "disabled",
     },
   },
   /* Configure projects for major browsers */
