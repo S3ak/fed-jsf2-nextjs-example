@@ -28,7 +28,6 @@ const itemVariants = {
 };
 
 export default function TodoListUI({ todos = [] }: IProps) {
-  console.log("UI comp", todos);
   return (
     // FIXME: Motion is causeing rerendering issues
     <section
