@@ -5,6 +5,8 @@ import { TodoListSkeleton } from "@/components/todo-list/TodoListUI";
 import CreateTodoForm from "@/components/create-todo/CreateTodoForm";
 import { createTodoAction } from "./actions";
 
+export const dynamic = "force-dynamic";
+
 export default async function TodosPage() {
   return (
     <div className="min-h-screen bg-zinc-50 px-4 py-10 dark:bg-black sm:px-6 lg:px-8">

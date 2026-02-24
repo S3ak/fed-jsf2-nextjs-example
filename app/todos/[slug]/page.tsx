@@ -1,17 +1,10 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { API_URL } from "@/lib/constants";
-import { Todo, TodoResponse } from "@/lib/types/todo";
+import { Todo } from "@/lib/types/todo";
 import CardDetail from "@/components/card-details/CardDetail";
 
-export async function generateStaticParams() {
-  const json: TodoResponse = await fetch(`${API_URL}/todos`).then((res) =>
-    res.json(),
-  );
-
-  return json.data.map((todo) => ({
-    slug: todo.id.toString(),
-  }));
-}
+export const dynamic = "force-dynamic";
 
 export default async function TodoDetailsPage({
   params,
@@ -19,11 +12,15 @@ export default async function TodoDetailsPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const res = await fetch(`${API_URL}/todos/${slug}`, {
+    cache: "no-store",
+  });
 
-  const res = await fetch(`${API_URL}/todos/${slug}`);
+  if (res.status === 404) {
+    notFound();
+  }
 
   if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
     throw new Error("Failed to fetch data");
   }
 
