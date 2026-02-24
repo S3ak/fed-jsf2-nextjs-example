@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+// NOTE: We need to activate MSW when testing
+if (process.env.NEXT_PUBLIC_API_MOCKING === "enabled") {
+  require("../lib/mocks");
+}
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
