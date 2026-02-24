@@ -4,9 +4,7 @@ import { defineConfig, devices } from "@playwright/test";
 const PORT = process.env.PORT || 3000;
 
 // Set webServer.url and use.baseURL with the location of the WebServer respecting the correct set port
-const baseURL = process.env.CI
-  ? process.env.BASE_URL
-  : `http://localhost:${PORT}`;
+const baseURL = process.env.BASE_URL || `http://localhost:${PORT}`;
 
 const isGithubCi = process.env.CI && process.env.GITHUB_ACTIONS;
 
