@@ -1,11 +1,9 @@
-import todos from "@/data/todos.json";
 import { Todo } from "@/lib/types/todo";
 import { DateTime } from "luxon";
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { NewTodoFormSchema } from "@/lib/validations/todo";
-
-let memTodos: Todo[] = todos.data as Todo[];
+import { addTodo, getTodos } from "@/lib/data/todo-store-local";
 
 export async function GET(_req: Request) {
   //   const url = new URL(request.url);
@@ -22,7 +20,7 @@ export async function GET(_req: Request) {
   //     },
   //   })
   //   const data = await res.json()
-  const data = memTodos;
+  const data = getTodos();
 
   return NextResponse.json({ data });
 }
@@ -58,16 +56,13 @@ export async function POST(req: Request) {
   const formattedDueDate = DateTime.fromISO(dueDate);
   const isoDate = formattedDueDate.toISO() ?? "";
 
-  memTodos = [
-    ...memTodos,
-    {
-      id,
-      title,
-      dueDate: isoDate,
-      priority,
-      completed,
-    },
-  ];
+  const data = addTodo({
+    id,
+    title,
+    dueDate: isoDate,
+    priority,
+    completed,
+  } as Todo);
 
   revalidatePath("/todos");
 
@@ -75,7 +70,7 @@ export async function POST(req: Request) {
     {
       ok: true,
       message: "Successfully created a Todo",
-      data: memTodos,
+      data,
     },
     {
       status: 201,

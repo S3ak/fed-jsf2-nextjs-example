@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { API_URL } from "@/lib/constants";
 import { revalidatePath, revalidateTag } from "next/cache";
+import { redirect } from "next/navigation";
 
 const TodoFormDataSchema = z.object({
   title: z.string(),
@@ -44,8 +45,6 @@ export async function createTodoAction(
       body: formValues,
     });
 
-    console.warn("response >>>", response);
-
     if (!response.ok) {
       throw new Error("Failed to create todo");
     }
@@ -53,6 +52,7 @@ export async function createTodoAction(
     // Revalidate the todos page to show the new todo
     revalidatePath("/todos");
     revalidateTag("todos", "max");
+    redirect("/todos");
 
     return { success: true };
   } catch (error) {
