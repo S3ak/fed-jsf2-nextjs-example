@@ -28,25 +28,31 @@ const itemVariants = {
 };
 
 export default function TodoListUI({ todos = [] }: IProps) {
+  console.log("UI comp", todos);
   return (
-    <motion.section
+    // FIXME: Motion is causeing rerendering issues
+    <section
       className="flex flex-col gap-3"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
+      // variants={containerVariants}
+      // initial="hidden"
+      // animate="visible"
     >
-      {todos.map(({ id, title, priority, dueDate, completed }) => (
-        <motion.div key={id} variants={itemVariants}>
+      {todos.map(({ id, title, priority, dueDate, completed, createdAt }) => (
+        <div
+          key={id}
+          //  variants={itemVariants}
+        >
           <TodoListItem
             id={id}
             title={title}
             priority={priority}
             dueDate={dueDate}
             completed={completed}
+            createdAt={createdAt}
           />
-        </motion.div>
+        </div>
       ))}
-    </motion.section>
+    </section>
   );
 }
 

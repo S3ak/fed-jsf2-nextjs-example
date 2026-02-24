@@ -4,12 +4,12 @@ import { API_URL } from "../constants";
 export async function fetchTodos() {
   try {
     const res = await fetch(`${API_URL}/todos`, {
-      cache: "force-cache",
+      cache: "no-store",
       next: {
         tags: ["todos"],
       },
     });
-    const json = res.json();
+    const json = await res.json();
 
     if (!res.ok) {
       throw new Error("Failed to fetch the todos");

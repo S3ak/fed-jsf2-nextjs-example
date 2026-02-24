@@ -1,7 +1,7 @@
 import { Todo } from "@/lib/types/todo";
 import { DateTime } from "luxon";
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { NewTodoFormSchema } from "@/lib/validations/todo";
 import { addTodo, getTodos } from "@/lib/data/todo-store-local";
 
@@ -62,7 +62,10 @@ export async function POST(req: Request) {
     dueDate: isoDate,
     priority,
     completed,
+    createdAt: new Date().toISOString(),
   } as Todo);
+
+  console.log("backend API data", data);
 
   revalidatePath("/todos");
 

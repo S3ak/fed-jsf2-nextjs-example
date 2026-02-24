@@ -2,8 +2,7 @@
 
 import { z } from "zod";
 import { API_URL } from "@/lib/constants";
-import { revalidatePath, revalidateTag } from "next/cache";
-import { redirect } from "next/navigation";
+import { revalidatePath, updateTag } from "next/cache";
 
 const TodoFormDataSchema = z.object({
   title: z.string(),
@@ -51,8 +50,7 @@ export async function createTodoAction(
 
     // Revalidate the todos page to show the new todo
     revalidatePath("/todos");
-    revalidateTag("todos", "max");
-    redirect("/todos");
+    updateTag("todos");
 
     return { success: true };
   } catch (error) {

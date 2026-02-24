@@ -24,7 +24,8 @@ export default async function TodoDetailsPage({
     throw new Error("Failed to fetch data");
   }
 
-  const { id, title, priority, dueDate, completed }: Todo = await res.json();
+  const { id, title, priority, dueDate, completed, createdAt }: Todo =
+    await res.json();
 
   return (
     <div className="min-h-screen bg-zinc-50 px-4 py-10 dark:bg-black sm:px-6 lg:px-8">
@@ -57,6 +58,7 @@ export default async function TodoDetailsPage({
           priority={priority}
           dueDate={dueDate}
           completed={completed}
+          createdAt={createdAt}
         />
       </main>
     </div>
