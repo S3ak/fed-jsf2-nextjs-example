@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { DateTime } from "luxon";
 import type {
-  CreateTodoActionResult,
+  MutateTodoActionResult,
   Todo,
   ToggleTodoCompleteFormData,
 } from "@/lib/types/todo";
@@ -19,9 +19,10 @@ import {
 import { Field } from "../ui/field";
 import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
+import { useRouter } from "next/navigation";
 
 type IProps = {
-  onToggleIsComplete: (data: FormData) => Promise<CreateTodoActionResult>;
+  onToggleIsComplete: (data: FormData) => Promise<MutateTodoActionResult>;
 };
 
 export default function TodoListItem({
@@ -39,6 +40,7 @@ export default function TodoListItem({
   const formattedDateTime = DateTime.fromISO(dueDate);
   const checkboxId = `todo-complete-${id}`;
   const [isCompleted, setIsCompleted] = useState(defaultIsCompleted);
+  const router = useRouter();
 
   const handleOnToggle = async (nextValue: boolean): Promise<void> => {
     // We need previous value for optimistic update
@@ -52,13 +54,15 @@ export default function TodoListItem({
 
     const formData = new FormData();
     formData.append("id", String(updateTodoFormData.id));
-    formData.append("completed", String(updateTodoFormData.isCompleted));
+    formData.append("isCompleted", String(updateTodoFormData.isCompleted));
 
-    const { success } = await onToggleIsComplete(formData);
+    const { success, errors } = await onToggleIsComplete(formData);
 
     if (!success) {
       setIsCompleted(previousValue);
     }
+
+    router.refresh();
   };
 
   return (

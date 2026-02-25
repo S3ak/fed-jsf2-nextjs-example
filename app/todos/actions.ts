@@ -20,17 +20,14 @@ export async function getTodosAction() {
 }
 
 export async function createTodoAction(
-  formValues: FormData,
+  formData: FormData,
 ): Promise<CreateTodoActionResult> {
   try {
-    console.log("---------------------------");
-    console.info(">>> START server actino <<<", formValues.get("title"));
-
     // Validate form fields using Zod
     const validatedFields = CreateTodoFormDataSchema.safeParse({
-      title: String(formValues.get("title") ?? ""),
-      dueDate: String(formValues.get("dueDate") ?? ""),
-      priority: String(formValues.get("priority") ?? "low"),
+      title: String(formData.get("title") ?? ""),
+      dueDate: String(formData.get("dueDate") ?? ""),
+      priority: String(formData.get("priority") ?? "low"),
     });
 
     if (!validatedFields.success) {
@@ -45,6 +42,7 @@ export async function createTodoAction(
     const currentUserId = crypto.randomUUID();
     const now = new Date().toISOString();
 
+    // Build out our todo for db insert
     const todo = TodoSchema.parse({
       id: crypto.randomUUID(),
       createdAt: now,
@@ -72,8 +70,6 @@ export async function createTodoAction(
     revalidatePath("/todos");
     updateTag("todos");
 
-    console.log(">>> server action reached <<<");
-
     return { success: true };
   } catch (error) {
     console.error("Error creating todo:", error);
@@ -82,26 +78,35 @@ export async function createTodoAction(
 }
 
 export async function toggleTaskIsCompleteAction(
-  formValues: FormData,
+  formData: FormData,
 ): Promise<MutateTodoActionResult> {
   try {
+    console.warn("====================");
+    console.warn(">>> Server action staring <<<<");
     // We express the todo with a interface instead of unknown formData
     const updateTodoData: ToggleTodoCompleteFormData = {
-      id: String(formValues.get("id") ?? ""),
-      isCompleted: String(formValues.get("completed")) === "true",
+      id: String(formData.get("id") ?? ""),
+      isCompleted: String(formData.get("isCompleted")) === "true",
     };
 
+    console.log("updateTodoData id", updateTodoData.id);
     const validatedTodoData = ToggleTaskIsCompleteActionSchema.safeParse({
       id: String(updateTodoData.id),
       completed: updateTodoData.isCompleted,
     });
 
     if (!validatedTodoData.success) {
+      console.warn(
+        ">>> Server action valdation has errors <<<<",
+        validatedTodoData.error,
+      );
       return {
         success: false,
         errors: z.treeifyError(validatedTodoData.error),
       };
     }
+
+    console.warn(">>> Server action valdation passed <<<<");
 
     // TODO: Use Neon/ drizzle to execute the query on db
     /**
@@ -111,9 +116,12 @@ export async function toggleTaskIsCompleteAction(
     //   isCompleted: updateTodoData.isCompleted,
     // });
 
-    updateTodoById(validatedTodoData.data.id, {
+    console.info(" >>> About to insert into db <<<");
+    const todos = updateTodoById(validatedTodoData.data.id, {
       isCompleted: validatedTodoData.data.isCompleted,
     });
+
+    console.log(" >>> Server action updated todo", todos);
 
     revalidatePath("/todos");
     updateTag("todos");
