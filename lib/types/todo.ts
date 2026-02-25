@@ -1,18 +1,51 @@
 import z from "zod";
-import { NewTodoFormSchema } from "../validations/todo";
 
-// TODO: refactor to use zod
-export interface Todo {
-  id: number | string;
-  title: string;
-  dueDate: string;
-  priority: "Low" | "Medium" | "High";
-  completed: boolean;
-  createdAt: string;
-}
+export const TodoSchema = z.object({
+  id: z.uuid(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
+  isCompleted: z.boolean().default(false),
+  title: z.string().min(2),
+  description: z.string().min(2).optional(),
+  dueDate: z.iso.datetime(),
+  priority: z.enum(["low", "medium", "high"]).default("low"),
+  authorId: z.uuid(),
+});
+
+export const CreateTodoFormDataSchema = TodoSchema.pick({
+  title: true,
+  dueDate: true,
+  priority: true,
+});
+
+export const ToggleTaskIsCompleteActionSchema = TodoSchema.pick({
+  id: true,
+  isCompleted: true,
+});
+
+// TODO: rename it to mutateTodoActionResult
+export type CreateTodoActionResult = {
+  success: boolean;
+  errors?: {
+    title?: string[];
+    dueDate?: string[];
+    priority?: string[];
+  };
+};
+
+export type MutateTodoActionResult = {
+  success: boolean;
+  errors?: unknown;
+};
+
+export type Todo = z.infer<typeof TodoSchema>;
 
 export interface TodoResponse {
   data: Todo[];
 }
 
-export type NewTodoFormData = z.infer<typeof NewTodoFormSchema>;
+export type createTodoFormData = z.infer<typeof CreateTodoFormDataSchema>;
+
+export type ToggleTodoCompleteFormData = z.infer<
+  typeof ToggleTaskIsCompleteActionSchema
+>;

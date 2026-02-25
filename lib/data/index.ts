@@ -1,5 +1,6 @@
-import { neon } from "@neondatabase/serverless";
 import { API_URL } from "../constants";
+import { Todo, TodoResponse } from "../types/todo";
+import { updateTodoById } from "./todo-store-local";
 
 export async function fetchTodos() {
   try {
@@ -22,11 +23,43 @@ export async function fetchTodos() {
   }
 }
 
-async function _demoCreateServerAction(formData: FormData) {
-  "use server";
-  // Connect to the Neon database
-  const sql = neon(`${process.env.DATABASE_URL}`);
-  const title = formData.get("title");
-  // Insert the comment from the form into the Postgres database
-  await sql("INSERT INTO todos (todo) VALUES ($1)", [title]);
+export async function createTodo(todo: Todo) {
+  try {
+    const res = await fetch(`${API_URL}/todos`, {
+      method: "POST",
+      body: JSON.stringify(todo),
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch the todos");
+    }
+
+    const json: TodoResponse = await res.json();
+
+    return json;
+  } catch (error) {
+    console.error("API Error:", error);
+    throw new Error("Failed to fetch the todos");
+  }
+}
+
+export async function mutateTodo(id: string, todo: Partial<Todo>) {
+  try {
+    // const res = await fetch(`${API_URL}/todos/${id}`, {
+    //   method: "PATCH",
+    //   body: JSON.stringify(todo),
+    // });
+
+    // if (!res.ok) {
+    //   throw new Error("Failed to fetch the todos");
+    // }
+
+    // const json: TodoResponse = await res.json();
+    const todos = await updateTodoById(id, todo);
+
+    return todos;
+  } catch (error) {
+    console.error("API Error:", error);
+    throw new Error("Failed to fetch the todos");
+  }
 }

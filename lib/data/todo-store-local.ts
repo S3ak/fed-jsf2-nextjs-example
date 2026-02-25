@@ -16,7 +16,7 @@ export function addTodo(todo: Todo) {
   return memTodos;
 }
 
-export function updateTodoById(id: string, updates: Partial<Todo>) {
+export function updateTodoById(id: string, updates: Partial<Todo>): Todo[] {
   let updatedTodo: Todo | undefined;
 
   memTodos = memTodos.map((todo) => {
@@ -32,5 +32,5 @@ export function updateTodoById(id: string, updates: Partial<Todo>) {
     return updatedTodo;
   });
 
-  return updatedTodo;
+  return memTodos;
 }

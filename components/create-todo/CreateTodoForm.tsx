@@ -1,13 +1,15 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/style-utils";
-import { NewTodoFormData } from "@/lib/types/todo";
-import { NewTodoFormSchema } from "@/lib/validations/todo";
+import {
+  CreateTodoActionResult,
+  createTodoFormData,
+  CreateTodoFormDataSchema,
+} from "@/lib/types/todo";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CreateTodoActionResult } from "@/app/todos/actions";
+import { Label } from "../ui/label";
 
 type CreateTodoFormProps = {
   createTodoAction: (data: FormData) => Promise<CreateTodoActionResult>;
@@ -16,23 +18,21 @@ type CreateTodoFormProps = {
 export default function CreateTodoForm({
   createTodoAction,
 }: CreateTodoFormProps) {
-  const router = useRouter();
-
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-  } = useForm<NewTodoFormData>({
+  } = useForm({
     defaultValues: {
-      title: "Demo title",
-      dueDate: "2026-02-28T16:47",
-      priority: "Low",
+      title: "",
+      dueDate: "",
+      priority: "low",
     },
-    resolver: zodResolver(NewTodoFormSchema),
+    resolver: zodResolver(CreateTodoFormDataSchema),
   });
 
-  const onFormSubmit = async (formValues: NewTodoFormData) => {
+  const onFormSubmit = async (formValues: createTodoFormData) => {
     const data = new FormData();
 
     data.append("title", formValues.title);
@@ -43,7 +43,6 @@ export default function CreateTodoForm({
 
     if (success) {
       reset();
-      router.refresh();
     }
   };
 
@@ -55,15 +54,12 @@ export default function CreateTodoForm({
     >
       {/* Title Field */}
       <div className="space-y-2">
-        <label
-          htmlFor="todo-title"
-          className="text-sm font-medium leading-none text-zinc-900 peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-zinc-100"
-        >
+        <Label htmlFor="todo-title">
           Title{" "}
           <span className="text-red-500" aria-hidden="true">
             *
           </span>
-        </label>
+        </Label>
         <input
           id="todo-title"
           type="text"
@@ -103,15 +99,12 @@ export default function CreateTodoForm({
 
       {/* Due Date Field */}
       <div className="space-y-2">
-        <label
-          htmlFor="todo-dueDate"
-          className="text-sm font-medium leading-none text-zinc-900 peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-zinc-100"
-        >
+        <Label htmlFor="todo-dueDate">
           Due Date{" "}
           <span className="text-red-500" aria-hidden="true">
             *
           </span>
-        </label>
+        </Label>
         <input
           id="todo-dueDate"
           type="datetime-local"
@@ -150,15 +143,12 @@ export default function CreateTodoForm({
 
       {/* Priority Field */}
       <div className="space-y-2">
-        <label
-          htmlFor="todo-priority"
-          className="text-sm font-medium leading-none text-zinc-900 peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-zinc-100"
-        >
+        <Label htmlFor="todo-priority">
           Priority{" "}
           <span className="text-red-500" aria-hidden="true">
             *
           </span>
-        </label>
+        </Label>
         <select
           id="todo-priority"
           className={cn(

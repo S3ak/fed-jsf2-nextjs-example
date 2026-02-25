@@ -1,16 +1,19 @@
 "use client";
 
-import { motion } from "motion/react";
+// import { motion } from "motion/react";
 import TodoListItem from "../todo-list-item/TodoListItem";
-import { Todo } from "@/lib/types/todo";
+import { CreateTodoActionResult, Todo } from "@/lib/types/todo";
 import { Card, CardFooter, CardHeader } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
 
 type IProps = {
   todos: Todo[];
+  handleToggleIsCompleteAction: (
+    data: FormData,
+  ) => Promise<CreateTodoActionResult>;
 };
 
-const containerVariants = {
+const _containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -22,12 +25,15 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const _itemVariants = {
   hidden: { opacity: 0, y: 20 }, // Start hidden, 20px below final position
   visible: { opacity: 1, y: 0 }, // End visible, at final position
 };
 
-export default function TodoListUI({ todos = [] }: IProps) {
+export default function TodoListUI({
+  todos = [],
+  handleToggleIsCompleteAction,
+}: IProps) {
   return (
     // FIXME: Motion is causeing rerendering issues
     <section
@@ -36,21 +42,35 @@ export default function TodoListUI({ todos = [] }: IProps) {
       // initial="hidden"
       // animate="visible"
     >
-      {todos.map(({ id, title, priority, dueDate, completed, createdAt }) => (
-        <div
-          key={id}
-          //  variants={itemVariants}
-        >
-          <TodoListItem
-            id={id}
-            title={title}
-            priority={priority}
-            dueDate={dueDate}
-            completed={completed}
-            createdAt={createdAt}
-          />
-        </div>
-      ))}
+      {todos.map(
+        ({
+          id,
+          title,
+          priority,
+          dueDate,
+          isCompleted,
+          createdAt,
+          updatedAt,
+          authorId,
+        }) => (
+          <div
+            key={id}
+            //  variants={itemVariants}
+          >
+            <TodoListItem
+              id={id}
+              title={title}
+              priority={priority}
+              dueDate={dueDate}
+              isCompleted={isCompleted}
+              createdAt={createdAt}
+              updatedAt={updatedAt}
+              authorId={authorId}
+              onToggleIsComplete={handleToggleIsCompleteAction}
+            />
+          </div>
+        ),
+      )}
     </section>
   );
 }

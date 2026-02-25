@@ -22,16 +22,16 @@ export async function PATCH(
   ctx: RouteContext<`/api/v1/todos/[id]`>,
 ) {
   const { id } = await ctx.params;
-  const body = (await request.json()) as { completed?: boolean };
+  const body = await request.json();
 
-  if (typeof body.completed !== "boolean") {
-    return NextResponse.json(
-      { error: "Invalid payload. 'completed' must be a boolean." },
-      { status: 400 },
-    );
-  }
+  // if (typeof body.completed !== "boolean") {
+  //   return NextResponse.json(
+  //     { error: "Invalid payload. 'completed' must be a boolean." },
+  //     { status: 400 },
+  //   );
+  // }
 
-  const updatedTodo = updateTodoById(id, { completed: body.completed });
+  const updatedTodo = updateTodoById(id, { isCompleted: body.completed });
 
   if (!updatedTodo) {
     return NextResponse.json({ error: "Couldn't find todo" }, { status: 404 });
