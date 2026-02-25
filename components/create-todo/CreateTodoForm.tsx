@@ -10,6 +10,7 @@ import {
 } from "@/lib/types/todo";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "../ui/label";
+import { useRouter } from "next/navigation";
 
 type CreateTodoFormProps = {
   createTodoAction: (data: FormData) => Promise<CreateTodoActionResult>;
@@ -18,6 +19,7 @@ type CreateTodoFormProps = {
 export default function CreateTodoForm({
   createTodoAction,
 }: CreateTodoFormProps) {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -39,10 +41,11 @@ export default function CreateTodoForm({
     data.append("priority", formValues.priority);
     data.append("dueDate", formValues.dueDate);
 
-    const { success } = await createTodoAction(data);
+    const { success, errors } = await createTodoAction(data);
+    reset();
 
     if (success) {
-      reset();
+      router.refresh();
     }
   };
 
@@ -74,17 +77,7 @@ export default function CreateTodoForm({
           aria-invalid={errors.title ? "true" : "false"}
           aria-describedby={errors.title ? "todo-title-error" : undefined}
           aria-required="true"
-          {...register("title", {
-            required: "Title is required",
-            minLength: {
-              value: 3,
-              message: "Title must be at least 3 characters",
-            },
-            maxLength: {
-              value: 100,
-              message: "Title must not exceed 100 characters",
-            },
-          })}
+          {...register("title")}
         />
         {errors.title && (
           <p
@@ -118,17 +111,7 @@ export default function CreateTodoForm({
           aria-invalid={errors.dueDate ? "true" : "false"}
           aria-describedby={errors.dueDate ? "todo-dueDate-error" : undefined}
           aria-required="true"
-          {...register("dueDate", {
-            required: "Due date is required",
-            validate: (value) => {
-              const selectedDate = new Date(value);
-              const now = new Date();
-              if (selectedDate < now) {
-                return "Due date must be in the future";
-              }
-              return true;
-            },
-          })}
+          {...register("dueDate")}
         />
         {errors.dueDate && (
           <p
@@ -161,13 +144,11 @@ export default function CreateTodoForm({
           aria-invalid={errors.priority ? "true" : "false"}
           aria-describedby={errors.priority ? "todo-priority-error" : undefined}
           aria-required="true"
-          {...register("priority", {
-            required: "Priority is required",
-          })}
+          {...register("priority")}
         >
-          <option value="Low">Low</option>
-          <option value="Medium">Medium</option>
-          <option value="High">High</option>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
         </select>
         {errors.priority && (
           <p

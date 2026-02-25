@@ -2,15 +2,15 @@
 
 // import { motion } from "motion/react";
 import TodoListItem from "../todo-list-item/TodoListItem";
-import { CreateTodoActionResult, Todo } from "@/lib/types/todo";
+import { MutateTodoActionResult, Todo } from "@/lib/types/todo";
 import { Card, CardFooter, CardHeader } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
 
-type IProps = {
+type TodoListUIProps = {
   todos: Todo[];
   handleToggleIsCompleteAction: (
     data: FormData,
-  ) => Promise<CreateTodoActionResult>;
+  ) => Promise<MutateTodoActionResult>;
 };
 
 const _containerVariants = {
@@ -33,7 +33,7 @@ const _itemVariants = {
 export default function TodoListUI({
   todos = [],
   handleToggleIsCompleteAction,
-}: IProps) {
+}: TodoListUIProps) {
   return (
     // FIXME: Motion is causeing rerendering issues
     <section

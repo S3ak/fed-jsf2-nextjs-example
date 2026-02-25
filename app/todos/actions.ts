@@ -7,6 +7,7 @@ import {
   MutateTodoActionResult,
   type CreateTodoActionResult,
   type ToggleTodoCompleteFormData,
+  CreateTodoFormDataSchema,
 } from "@/lib/types/todo";
 import z from "zod";
 import { addTodo, getTodos, updateTodoById } from "@/lib/data/todo-store-local";
@@ -22,20 +23,16 @@ export async function createTodoAction(
   formValues: FormData,
 ): Promise<CreateTodoActionResult> {
   try {
-    // TODO: Get from auth
-    const currentUserId = crypto.randomUUID();
+    console.log("---------------------------");
+    console.info(">>> START server actino <<<", formValues.get("title"));
+
     // Validate form fields using Zod
-    const validatedFields = TodoSchema.safeParse({
-      id: crypto.randomUUID(),
-      isCompleted: false,
-      title: formValues.get("title"),
-      dueDate: formValues.get("dueDate"),
-      priority: formValues.get("priority") ?? "low",
-      description: formValues.get("description") ?? "",
-      authorId: currentUserId,
+    const validatedFields = CreateTodoFormDataSchema.safeParse({
+      title: String(formValues.get("title") ?? ""),
+      dueDate: String(formValues.get("dueDate") ?? ""),
+      priority: String(formValues.get("priority") ?? "low"),
     });
 
-    // If form validation fails, return errors early. Otherwise, continue.
     if (!validatedFields.success) {
       const flattened = z.flattenError(validatedFields.error);
       return {
@@ -44,13 +41,28 @@ export async function createTodoAction(
       };
     }
 
+    // TODO: Get from auth
+    const currentUserId = crypto.randomUUID();
+    const now = new Date().toISOString();
+
+    const todo = TodoSchema.parse({
+      id: crypto.randomUUID(),
+      createdAt: now,
+      updatedAt: now,
+      isCompleted: false,
+      authorId: currentUserId,
+      ...validatedFields.data,
+    });
+
+    // If form validation fails, return errors early. Otherwise, continue.
+
     // Send to your API
     // const response = await fetch(`${API_URL}/todos`, {
     //   method: "POST",
     //   body: formValues,
     // });
 
-    const response = await addTodo(validatedFields.data);
+    const response = addTodo(todo);
 
     // if (!response.ok) {
     //   throw new Error("Failed to create todo");
@@ -59,6 +71,8 @@ export async function createTodoAction(
     // Revalidate the todos page to show the new todo
     revalidatePath("/todos");
     updateTag("todos");
+
+    console.log(">>> server action reached <<<");
 
     return { success: true };
   } catch (error) {

@@ -1,13 +1,26 @@
 import z from "zod";
 
+const DueDateSchema = z
+  .string()
+  .refine((value) => !Number.isNaN(new Date(value).getTime()), {
+    message: "Invalid datetime.",
+  })
+  .transform((value) => new Date(value).toISOString());
+
 export const TodoSchema = z.object({
   id: z.uuid(),
   createdAt: z.iso.datetime(),
   updatedAt: z.iso.datetime(),
   isCompleted: z.boolean().default(false),
-  title: z.string().min(2),
-  description: z.string().min(2).optional(),
-  dueDate: z.iso.datetime(),
+  title: z
+    .string()
+    .min(2, "Title must be at least 2 characters")
+    .max(100, "Title must not exceed 100 characters"),
+  description: z
+    .string()
+    .min(2, "Title must be at least 2 characters")
+    .optional(),
+  dueDate: DueDateSchema,
   priority: z.enum(["low", "medium", "high"]).default("low"),
   authorId: z.uuid(),
 });

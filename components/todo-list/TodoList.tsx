@@ -3,10 +3,11 @@ import { fetchTodos } from "@/lib/data";
 import TodoListUI, { TodoListSkeleton } from "./TodoListUI";
 import { Card } from "../ui/card";
 import { toggleTaskIsCompleteAction } from "@/app/todos/actions";
+import { getTodos } from "@/lib/data/todo-store-local";
 
 export default async function TodoList() {
-  const json = await fetchTodos();
-  const todos: Todo[] = json.data;
+  const json = await getTodos();
+  const todos: Todo[] = json;
 
   // Sort todos by createdAt date (newest first)
   const sortedTodos = todos.sort((a, b) => {
