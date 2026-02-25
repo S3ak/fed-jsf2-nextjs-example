@@ -31,6 +31,21 @@ export const CreateTodoFormDataSchema = TodoSchema.pick({
   priority: true,
 });
 
+export const MutateTodoFormSchema = TodoSchema.pick({
+  title: true,
+  dueDate: true,
+  priority: true,
+  isCompleted: true,
+});
+
+export const OverrideMutateTodoFormSchema = MutateTodoFormSchema.extend({
+  dueDate: z
+    .date({
+      message: "A date of birth is required.",
+    })
+    .transform((val) => val.toISOString()),
+});
+
 export const ToggleTaskIsCompleteActionSchema = TodoSchema.pick({
   id: true,
   isCompleted: true,
@@ -62,3 +77,5 @@ export type createTodoFormData = z.infer<typeof CreateTodoFormDataSchema>;
 export type ToggleTodoCompleteFormData = z.infer<
   typeof ToggleTaskIsCompleteActionSchema
 >;
+
+export type MutateTodoFormSchemaType = z.infer<typeof MutateTodoFormSchema>;

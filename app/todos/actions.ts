@@ -4,10 +4,12 @@ import { revalidatePath, updateTag } from "next/cache";
 import {
   TodoSchema,
   ToggleTaskIsCompleteActionSchema,
-  MutateTodoActionResult,
+  MutateTodoFormSchema,
+  type MutateTodoActionResult,
   type CreateTodoActionResult,
   type ToggleTodoCompleteFormData,
   CreateTodoFormDataSchema,
+  MutateTodoFormSchemaType,
 } from "@/lib/types/todo";
 import z from "zod";
 import { addTodo, getTodos, updateTodoById } from "@/lib/data/todo-store-local";
@@ -77,12 +79,51 @@ export async function createTodoAction(
   }
 }
 
+export async function mutateTodoAction(
+  formData: FormData,
+): Promise<MutateTodoActionResult> {
+  try {
+    // TODO: fix this at the root
+    type MutateTodoFormPayload = MutateTodoFormSchemaType & { id: string };
+
+    console.info(">>> formData ->", formData);
+    const updateTodoData: MutateTodoFormPayload = {
+      isCompleted: String(formData.get("isCompleted")) === "true",
+      dueDate: String(formData.get("dueDate")),
+      priority: String(formData.get("priority") ?? "low") as
+        | "low"
+        | "medium"
+        | "high",
+      title: String(formData.get("title")),
+      id: String(formData.get("id")),
+    };
+
+    const validatedTodoData = MutateTodoFormSchema.safeParse({
+      isCompleted: updateTodoData.isCompleted,
+      dueDate: updateTodoData.dueDate,
+      title: updateTodoData.title,
+    });
+
+    if (!validatedTodoData.success) {
+      return {
+        success: false,
+        errors: z.treeifyError(validatedTodoData.error),
+      };
+    }
+
+    updateTodoById(updateTodoData.id, validatedTodoData.data);
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error updating todo:", error);
+    return { success: false, errors: error };
+  }
+}
+
 export async function toggleTaskIsCompleteAction(
   formData: FormData,
 ): Promise<MutateTodoActionResult> {
   try {
-    console.warn("====================");
-    console.warn(">>> Server action staring <<<<");
     // We express the todo with a interface instead of unknown formData
     const updateTodoData: ToggleTodoCompleteFormData = {
       id: String(formData.get("id") ?? ""),
@@ -96,10 +137,6 @@ export async function toggleTaskIsCompleteAction(
     });
 
     if (!validatedTodoData.success) {
-      console.warn(
-        ">>> Server action valdation has errors <<<<",
-        validatedTodoData.error,
-      );
       return {
         success: false,
         errors: z.treeifyError(validatedTodoData.error),
@@ -116,12 +153,9 @@ export async function toggleTaskIsCompleteAction(
     //   isCompleted: updateTodoData.isCompleted,
     // });
 
-    console.info(" >>> About to insert into db <<<");
     const todos = updateTodoById(validatedTodoData.data.id, {
       isCompleted: validatedTodoData.data.isCompleted,
     });
-
-    console.log(" >>> Server action updated todo", todos);
 
     revalidatePath("/todos");
     updateTag("todos");
