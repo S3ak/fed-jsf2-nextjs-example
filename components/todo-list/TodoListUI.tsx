@@ -1,16 +1,19 @@
 "use client";
 
-import { motion } from "motion/react";
+// import { motion } from "motion/react";
 import TodoListItem from "../todo-list-item/TodoListItem";
-import { Todo } from "@/lib/types/todo";
+import { MutateTodoActionResult, Todo } from "@/lib/types/todo";
 import { Card, CardFooter, CardHeader } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
 
-type IProps = {
+type TodoListUIProps = {
   todos: Todo[];
+  handleToggleIsCompleteAction: (
+    data: FormData,
+  ) => Promise<MutateTodoActionResult>;
 };
 
-const containerVariants = {
+const _containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -22,31 +25,53 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const _itemVariants = {
   hidden: { opacity: 0, y: 20 }, // Start hidden, 20px below final position
   visible: { opacity: 1, y: 0 }, // End visible, at final position
 };
 
-export default function TodoListUI({ todos = [] }: IProps) {
+export default function TodoListUI({
+  todos = [],
+  handleToggleIsCompleteAction,
+}: TodoListUIProps) {
   return (
-    <motion.section
+    // FIXME: Motion is causeing rerendering issues
+    <section
       className="flex flex-col gap-3"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
+      // variants={containerVariants}
+      // initial="hidden"
+      // animate="visible"
     >
-      {todos.map(({ id, title, priority, dueDate, completed }) => (
-        <motion.div key={id} variants={itemVariants}>
-          <TodoListItem
-            id={id}
-            title={title}
-            priority={priority}
-            dueDate={dueDate}
-            completed={completed}
-          />
-        </motion.div>
-      ))}
-    </motion.section>
+      {todos.map(
+        ({
+          id,
+          title,
+          priority,
+          dueDate,
+          isCompleted,
+          createdAt,
+          updatedAt,
+          authorId,
+        }) => (
+          <div
+            key={id}
+            //  variants={itemVariants}
+          >
+            <TodoListItem
+              id={id}
+              title={title}
+              priority={priority}
+              dueDate={dueDate}
+              isCompleted={isCompleted}
+              createdAt={createdAt}
+              updatedAt={updatedAt}
+              authorId={authorId}
+              onToggleIsComplete={handleToggleIsCompleteAction}
+            />
+          </div>
+        ),
+      )}
+    </section>
   );
 }
 

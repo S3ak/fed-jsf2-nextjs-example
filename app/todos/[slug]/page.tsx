@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { API_URL } from "@/lib/constants";
-import { Todo } from "@/lib/types/todo";
 import CardDetail from "@/components/card-details/CardDetail";
+import { getTodoById } from "@/lib/data/todo-store-local";
+import { mutateTodoAction } from "../actions";
 
 export const dynamic = "force-dynamic";
 
@@ -12,19 +12,37 @@ export default async function TodoDetailsPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const res = await fetch(`${API_URL}/todos/${slug}`, {
-    cache: "no-store",
-  });
+  // const res = await fetch(`${API_URL}/todos/${slug}`, {
+  //   cache: "no-store",
+  // });
 
-  if (res.status === 404) {
+  // if (res.status === 404) {
+  //   notFound();
+  // }
+
+  // if (!res.ok) {
+  //   throw new Error("Failed to fetch data");
+  // }
+
+  // const { id, title, priority, dueDate, isCompleted, createdAt }: Todo =
+  //   await res.json();
+  const todo = getTodoById(slug);
+
+  if (!todo) {
     notFound();
   }
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch data");
-  }
-
-  const { id, title, priority, dueDate, completed }: Todo = await res.json();
+  const {
+    id,
+    title,
+    priority,
+    dueDate,
+    isCompleted,
+    createdAt,
+    updatedAt,
+    authorId,
+    description,
+  } = todo;
 
   return (
     <div className="min-h-screen bg-zinc-50 px-4 py-10 dark:bg-black sm:px-6 lg:px-8">
@@ -42,7 +60,7 @@ export default async function TodoDetailsPage({
               <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-4xl">
                 Todo #{id}
               </h1>
-              {completed && (
+              {isCompleted && (
                 <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800 dark:bg-green-900/30 dark:text-green-400">
                   Completed
                 </span>
@@ -56,7 +74,12 @@ export default async function TodoDetailsPage({
           title={title}
           priority={priority}
           dueDate={dueDate}
-          completed={completed}
+          isCompleted={isCompleted}
+          createdAt={createdAt}
+          updatedAt={updatedAt}
+          authorId={authorId}
+          description={description}
+          mutateTodoAction={mutateTodoAction}
         />
       </main>
     </div>

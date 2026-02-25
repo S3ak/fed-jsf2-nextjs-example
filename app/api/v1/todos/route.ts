@@ -1,11 +1,12 @@
-import todos from "@/data/todos.json";
-import { Todo } from "@/lib/types/todo";
-import { DateTime } from "luxon";
+import { TodoSchema } from "@/lib/types/todo";
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { NewTodoFormSchema } from "@/lib/validations/todo";
-
-let memTodos: Todo[] = todos.data as Todo[];
+import {
+  addTodo as createTodo,
+  getTodos,
+  updateTodoById,
+} from "@/lib/data/todo-store-local";
+import z from "zod";
 
 export async function GET(_req: Request) {
   //   const url = new URL(request.url);
@@ -22,19 +23,25 @@ export async function GET(_req: Request) {
   //     },
   //   })
   //   const data = await res.json()
-  const data = memTodos;
+  const data = getTodos();
 
   return NextResponse.json({ data });
 }
 
 export async function POST(req: Request) {
-  const formData = await req.formData();
+  const jsonTodo = await req.json();
 
   // Validate form fields using Zod
-  const validatedFields = NewTodoFormSchema.safeParse({
-    title: formData.get("title"),
-    dueDate: formData.get("dueDate"),
-    priority: formData.get("priority"),
+  const validatedFields = TodoSchema.safeParse({
+    id: jsonTodo.id,
+    title: jsonTodo.title,
+    dueDate: jsonTodo.dueDate,
+    priority: jsonTodo.priority,
+    createdAt: jsonTodo.createdAt,
+    updatedAt: jsonTodo.updatedAt,
+    isCompleted: jsonTodo.isCompleted,
+    description: jsonTodo.description,
+    authorId: jsonTodo.authorId,
   });
 
   // If form validation fails, return errors early. Otherwise, continue.
@@ -42,8 +49,8 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         // FIXME:
-        errors: validatedFields.error.flatten().fieldErrors,
-        message: "Missing Fields. Failed to Create Invoice.",
+        errors: z.treeifyError(validatedFields.error),
+        message: "Missing Fields. Failed to Create Todo.",
       },
       {
         status: 401,
@@ -51,34 +58,103 @@ export async function POST(req: Request) {
     );
   }
 
-  // Prepare data for insertion into the database
-  const { title, dueDate, priority } = validatedFields.data;
-  const id = crypto.randomUUID();
-  const completed = false;
-  const formattedDueDate = DateTime.fromISO(dueDate);
-  const isoDate = formattedDueDate.toISO() ?? "";
+  try {
+    // NOTE: currently using memTodos
+    const data = createTodo(validatedFields.data);
 
-  memTodos = [
-    ...memTodos,
-    {
-      id,
-      title,
-      dueDate: isoDate,
-      priority,
-      completed,
-    },
-  ];
+    revalidatePath("/todos");
 
-  revalidatePath("/todos");
+    return NextResponse.json(
+      {
+        ok: true,
+        message: "Successfully created a Todo",
+        data,
+      },
+      {
+        status: 201,
+      },
+    );
+  } catch (error) {
+    return NextResponse.json(
+      {
+        ok: false,
+        message: "Failed to create Todo",
+      },
+      {
+        status: 401,
+      },
+    );
+  }
+}
 
-  return NextResponse.json(
-    {
-      ok: true,
-      message: "Successfully created a Todo",
-      data: memTodos,
-    },
-    {
-      status: 201,
-    },
-  );
+export async function PATCH(req: Request) {
+  const jsonTodo = await req.json();
+
+  // Validate form fields using Zod
+  const OptionalTodoSchema = TodoSchema.partial();
+  const validatedFields = OptionalTodoSchema.safeParse({
+    id: jsonTodo.id,
+    title: jsonTodo.title,
+    dueDate: jsonTodo.dueDate,
+    priority: jsonTodo.priority,
+    createdAt: jsonTodo.createdAt,
+    updatedAt: jsonTodo.updatedAt,
+    isCompleted: jsonTodo.isCompleted,
+    description: jsonTodo.description,
+    authorId: jsonTodo.authorId,
+  });
+
+  // If form validation fails, return errors early. Otherwise, continue.
+  if (!validatedFields.success) {
+    return NextResponse.json(
+      {
+        // FIXME:
+        errors: z.treeifyError(validatedFields.error),
+        message: "Missing Fields. Failed to Create Todo.",
+      },
+      {
+        status: 401,
+      },
+    );
+  }
+
+  if (!validatedFields.data.id) {
+    return NextResponse.json(
+      {
+        ok: false,
+        message: "Todo ID is required for updates.",
+      },
+      {
+        status: 400,
+      },
+    );
+  }
+
+  try {
+    // NOTE: currently using memTodos
+    const data = updateTodoById(validatedFields.data.id, validatedFields.data);
+
+    revalidatePath("/todos");
+
+    return NextResponse.json(
+      {
+        ok: true,
+        message: "Successfully created a Todo",
+        data,
+      },
+      {
+        status: 201,
+      },
+    );
+  } catch (error) {
+    return NextResponse.json(
+      {
+        ok: false,
+        message: "Failed to create Todo",
+      },
+      {
+        status: 401,
+      },
+    );
+  }
 }

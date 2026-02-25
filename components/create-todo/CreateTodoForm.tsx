@@ -3,10 +3,14 @@
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/style-utils";
-import { NewTodoFormData } from "@/lib/types/todo";
-import { NewTodoFormSchema } from "@/lib/validations/todo";
+import {
+  CreateTodoActionResult,
+  createTodoFormData,
+  CreateTodoFormDataSchema,
+} from "@/lib/types/todo";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CreateTodoActionResult } from "@/app/todos/actions";
+import { Label } from "../ui/label";
+import { useRouter } from "next/navigation";
 
 type CreateTodoFormProps = {
   createTodoAction: (data: FormData) => Promise<CreateTodoActionResult>;
@@ -15,29 +19,34 @@ type CreateTodoFormProps = {
 export default function CreateTodoForm({
   createTodoAction,
 }: CreateTodoFormProps) {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-  } = useForm<NewTodoFormData>({
+  } = useForm({
     defaultValues: {
-      title: "Demo title",
-      dueDate: "2026-02-28T16:47",
-      priority: "Low",
+      title: "",
+      dueDate: "",
+      priority: "low",
     },
-    resolver: zodResolver(NewTodoFormSchema),
+    resolver: zodResolver(CreateTodoFormDataSchema),
   });
 
-  const onFormSubmit = async (formValues: NewTodoFormData) => {
+  const onFormSubmit = async (formValues: createTodoFormData) => {
     const data = new FormData();
 
     data.append("title", formValues.title);
     data.append("priority", formValues.priority);
     data.append("dueDate", formValues.dueDate);
 
-    const { errors, success } = await createTodoAction(data);
+    const { success, errors } = await createTodoAction(data);
     reset();
+
+    if (success) {
+      router.refresh();
+    }
   };
 
   return (
@@ -48,15 +57,12 @@ export default function CreateTodoForm({
     >
       {/* Title Field */}
       <div className="space-y-2">
-        <label
-          htmlFor="todo-title"
-          className="text-sm font-medium leading-none text-zinc-900 peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-zinc-100"
-        >
+        <Label htmlFor="todo-title">
           Title{" "}
           <span className="text-red-500" aria-hidden="true">
             *
           </span>
-        </label>
+        </Label>
         <input
           id="todo-title"
           type="text"
@@ -71,17 +77,7 @@ export default function CreateTodoForm({
           aria-invalid={errors.title ? "true" : "false"}
           aria-describedby={errors.title ? "todo-title-error" : undefined}
           aria-required="true"
-          {...register("title", {
-            required: "Title is required",
-            minLength: {
-              value: 3,
-              message: "Title must be at least 3 characters",
-            },
-            maxLength: {
-              value: 100,
-              message: "Title must not exceed 100 characters",
-            },
-          })}
+          {...register("title")}
         />
         {errors.title && (
           <p
@@ -96,15 +92,12 @@ export default function CreateTodoForm({
 
       {/* Due Date Field */}
       <div className="space-y-2">
-        <label
-          htmlFor="todo-dueDate"
-          className="text-sm font-medium leading-none text-zinc-900 peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-zinc-100"
-        >
+        <Label htmlFor="todo-dueDate">
           Due Date{" "}
           <span className="text-red-500" aria-hidden="true">
             *
           </span>
-        </label>
+        </Label>
         <input
           id="todo-dueDate"
           type="datetime-local"
@@ -118,17 +111,7 @@ export default function CreateTodoForm({
           aria-invalid={errors.dueDate ? "true" : "false"}
           aria-describedby={errors.dueDate ? "todo-dueDate-error" : undefined}
           aria-required="true"
-          {...register("dueDate", {
-            required: "Due date is required",
-            validate: (value) => {
-              const selectedDate = new Date(value);
-              const now = new Date();
-              if (selectedDate < now) {
-                return "Due date must be in the future";
-              }
-              return true;
-            },
-          })}
+          {...register("dueDate")}
         />
         {errors.dueDate && (
           <p
@@ -143,15 +126,12 @@ export default function CreateTodoForm({
 
       {/* Priority Field */}
       <div className="space-y-2">
-        <label
-          htmlFor="todo-priority"
-          className="text-sm font-medium leading-none text-zinc-900 peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-zinc-100"
-        >
+        <Label htmlFor="todo-priority">
           Priority{" "}
           <span className="text-red-500" aria-hidden="true">
             *
           </span>
-        </label>
+        </Label>
         <select
           id="todo-priority"
           className={cn(
@@ -164,13 +144,11 @@ export default function CreateTodoForm({
           aria-invalid={errors.priority ? "true" : "false"}
           aria-describedby={errors.priority ? "todo-priority-error" : undefined}
           aria-required="true"
-          {...register("priority", {
-            required: "Priority is required",
-          })}
+          {...register("priority")}
         >
-          <option value="Low">Low</option>
-          <option value="Medium">Medium</option>
-          <option value="High">High</option>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
         </select>
         {errors.priority && (
           <p
