@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { signIn, signOut } from "@/auth";
 
 // NOTE: We need to activate MSW when testing
 if (process.env.NEXT_PUBLIC_API_MOCKING === "enabled") {
@@ -32,6 +33,34 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <section>
+          <form
+            action={async () => {
+              "use server";
+              await signOut({ redirectTo: "/" });
+            }}
+          >
+            <button className="flex h-12 grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3">
+              +<div className="hidden md:block">Sign Out</div>
+            </button>
+          </form>
+          <form
+            action={async () => {
+              "use server";
+              await signIn("google");
+            }}
+          >
+            <button type="submit">Signin with Google</button>
+          </form>
+          <form
+            action={async () => {
+              "use server";
+              await signIn("github");
+            }}
+          >
+            <button type="submit">Signin with Github</button>
+          </form>
+        </section>
         {children}
       </body>
     </html>

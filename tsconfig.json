@@ -25,7 +25,10 @@
       "@/services/*": ["./lib/services/*"],
       "@/utils/*": ["./lib/utils/*"],
       "@/hooks/*": ["./lib/hooks/*"],
+      // TODO: do better
+      "@/actions": ["./lib/actions"],
       "@/types/*": ["./lib/types/*"],
+      "@/auth": ["./auth.ts"],
       "@/data/*": ["./lib/data/*"]
     }
   },
