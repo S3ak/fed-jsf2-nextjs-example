@@ -1,4 +1,7 @@
 NEXT_PUBLIC_API_MOCKING=disabled
+AUTH_SECRET=
+AUTH_DEMO_EMAIL=demo@local.dev
+AUTH_DEMO_PASSWORD=password123
 # Recommended for most uses
 DATABASE_URL=
 
