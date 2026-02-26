@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
+import SignOutButton from "@/components/login/SignOutButton";
 import TodoList from "@/components/todo-list/TodoList";
 import { TodoListSkeleton } from "@/components/todo-list/TodoListUI";
 
@@ -18,12 +19,15 @@ export default async function ProtectedPage() {
     <div className="min-h-screen bg-zinc-50 px-4 py-10 dark:bg-black sm:px-6 lg:px-8">
       <main className="mx-auto flex w-full max-w-4xl flex-col gap-8">
         <header className="space-y-4">
-          <Link
-            href="/"
-            className="inline-flex text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-          >
-            ← Back to home
-          </Link>
+          <div className="flex items-center justify-between gap-3">
+            <Link
+              href="/"
+              className="inline-flex text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+            >
+              ← Back to home
+            </Link>
+            <SignOutButton />
+          </div>
 
           <div className="space-y-2">
             <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-4xl">
