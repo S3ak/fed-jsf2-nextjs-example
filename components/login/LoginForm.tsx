@@ -8,6 +8,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -18,6 +19,8 @@ import {
   LoginFormData,
   LoginFormDataSchema,
 } from "@/lib/types/auth";
+import { signIn } from "next-auth/react";
+import { FaGithub, FaGoogle } from "react-icons/fa";
 
 type LoginFormProps = {
   loginAction: (data: FormData) => Promise<LoginActionResult>;
@@ -116,6 +119,32 @@ export default function LoginForm({ loginAction }: LoginFormProps) {
           </Button>
         </form>
       </CardContent>
+      <CardFooter className="w-full">
+        <div className="w-full space-y-2">
+          <div>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full justify-start gap-2"
+              onClick={() => signIn("google", { redirectTo: "/todos" })}
+            >
+              <FaGoogle />
+              Sign In with Google
+            </Button>
+          </div>
+          <div>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full justify-start gap-2"
+              onClick={() => signIn("github", { redirectTo: "/todos" })}
+            >
+              <FaGithub />
+              Sign In with Github
+            </Button>
+          </div>
+        </div>
+      </CardFooter>
     </Card>
   );
 }

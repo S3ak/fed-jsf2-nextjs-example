@@ -1,13 +1,17 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { LoginFormDataSchema } from "@/lib/types/auth";
+import Google from "next-auth/providers/google";
+import Github from "next-auth/providers/github";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  basePath: "/api/v1/todos/auth",
+  basePath: "/api/auth",
   pages: {
     signIn: "/login",
   },
   providers: [
+    Google,
+    Github,
     Credentials({
       credentials: {
         email: { label: "Email", type: "email" },
