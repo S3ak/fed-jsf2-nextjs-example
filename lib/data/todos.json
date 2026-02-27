@@ -1,0 +1,74 @@
+{
+  "data": [
+    {
+      "id": "91c2f62e-16de-4650-b898-23f09f6c42f1",
+      "title": "Finish Next.js routing lesson",
+      "dueDate": "2026-02-19T17:00:00.000Z",
+      "priority": "High",
+      "isCompleted": false,
+      "createdAt": "2026-02-15T10:00:00.000Z",
+      "updatedAt": "2026-02-15T10:00:00.000Z",
+      "authorId": "4f8b39a6-1a51-4d90-9f54-15c64b5a4c71"
+    },
+    {
+      "id": "3df91f95-4bc2-4f7a-aa57-9ec9ac27f300",
+      "title": "Build todo form UI",
+      "dueDate": "2026-02-20T17:00:00.000Z",
+      "priority": "Medium",
+      "isCompleted": false,
+      "createdAt": "2026-02-16T10:00:00.000Z",
+      "updatedAt": "2026-02-16T10:00:00.000Z",
+      "authorId": "4f8b39a6-1a51-4d90-9f54-15c64b5a4c71"
+    },
+    {
+      "id": "711a3042-07f4-42a1-aa22-f0d330ccab90",
+      "title": "Refactor button variants",
+      "dueDate": "2026-02-21T17:00:00.000Z",
+      "priority": "Low",
+      "isCompleted": true,
+      "createdAt": "2026-02-17T10:00:00.000Z",
+      "updatedAt": "2026-02-18T08:30:00.000Z",
+      "authorId": "8f523e46-2c1f-4385-8f42-f49158f430eb"
+    },
+    {
+      "id": "d7fe79f7-fdd6-41d9-a3a9-f83e3f9c2881",
+      "title": "Write Playwright test for todos page",
+      "dueDate": "2026-02-22T17:00:00.000Z",
+      "priority": "High",
+      "isCompleted": false,
+      "createdAt": "2026-02-18T10:00:00.000Z",
+      "updatedAt": "2026-02-19T11:00:00.000Z",
+      "authorId": "9ca88ebf-8cd3-4ef2-a4e7-1cfb9d6d90a0"
+    },
+    {
+      "id": "86a4f462-b8e9-451a-8d8c-359eaf311684",
+      "title": "Polish dark mode spacing",
+      "dueDate": "2026-02-24T17:00:00.000Z",
+      "priority": "Low",
+      "isCompleted": true,
+      "createdAt": "2026-02-19T10:00:00.000Z",
+      "updatedAt": "2026-02-24T09:00:00.000Z",
+      "authorId": "8f523e46-2c1f-4385-8f42-f49158f430eb"
+    },
+    {
+      "id": "d82313b1-c7d2-44c7-ab76-ea89e138e0b5",
+      "createdAt": "2026-02-25T13:35:04.530Z",
+      "updatedAt": "2026-02-25T13:35:04.530Z",
+      "isCompleted": false,
+      "title": "this is forever",
+      "dueDate": "2026-02-28T13:35:00.000Z",
+      "priority": "low",
+      "authorId": "b2031824-b2cf-4a6c-8ae1-ffb3120039b7"
+    },
+    {
+      "id": "5042fd04-4139-4f7b-9b2a-e51d05577b33",
+      "createdAt": "2026-02-25T16:02:48.923Z",
+      "updatedAt": "2026-02-25T16:02:48.923Z",
+      "isCompleted": false,
+      "title": "Make pasta ",
+      "dueDate": "2026-03-30T22:00:00.000Z",
+      "priority": "low",
+      "authorId": "c90456f9-de6c-4c22-87f0-f99a9526ad7d"
+    }
+  ]
+}

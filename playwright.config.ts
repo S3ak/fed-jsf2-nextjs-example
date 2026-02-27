@@ -4,7 +4,9 @@ import { defineConfig, devices } from "@playwright/test";
 const PORT = process.env.PORT || 3000;
 
 // Set webServer.url and use.baseURL with the location of the WebServer respecting the correct set port
-const baseURL = `http://localhost:${PORT}`;
+const baseURL = process.env.BASE_URL || `http://localhost:${PORT}`;
+
+const isGithubCi = process.env.CI && process.env.GITHUB_ACTIONS;
 
 /**
  * Read environment variables from file.
@@ -43,6 +45,12 @@ export default defineConfig({
     url: baseURL,
     timeout: 120 * 1000,
     reuseExistingServer: !process.env.CI,
+    env: {
+      ...process.env,
+      NEXT_PUBLIC_API_MOCKING: isGithubCi
+        ? "enabled"
+        : process.env.NEXT_PUBLIC_API_MOCKING || "disabled",
+    },
   },
   /* Configure projects for major browsers */
   projects: [
