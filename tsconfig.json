@@ -26,6 +26,7 @@
       "@/utils/*": ["./lib/utils/*"],
       "@/hooks/*": ["./lib/hooks/*"],
       "@/types/*": ["./lib/types/*"],
+      "@/auth": ["./lib/services/auth/auth.ts"],
       "@/data/*": ["./lib/data/*"]
     }
   },
