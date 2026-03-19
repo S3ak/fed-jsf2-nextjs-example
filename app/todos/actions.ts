@@ -13,6 +13,7 @@ import {
 } from "@/lib/types/todo";
 import z from "zod";
 import { addTodo, getTodos, updateTodoById } from "@/lib/data/todo-store-local";
+import { createTodo } from "@/lib/data/neon";
 
 export async function getTodosAction() {
   return {
@@ -62,7 +63,8 @@ export async function createTodoAction(
     //   body: formValues,
     // });
 
-    const response = addTodo(todo);
+    // addTodo(todo);
+    createTodo(todo);
 
     // if (!response.ok) {
     //   throw new Error("Failed to create todo");

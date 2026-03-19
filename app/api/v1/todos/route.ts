@@ -59,7 +59,6 @@ export async function POST(req: Request) {
   }
 
   try {
-    // NOTE: currently using memTodos
     const data = createTodo(validatedFields.data);
 
     revalidatePath("/todos");
