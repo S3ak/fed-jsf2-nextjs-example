@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import CardDetail from "@/components/card-details/CardDetail";
-import { getTodoById } from "@/lib/data/todo-store-local";
+import { getTodoById } from "@/lib/data/neon";
 import { mutateTodoAction } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -26,7 +26,7 @@ export default async function TodoDetailsPage({
 
   // const { id, title, priority, dueDate, isCompleted, createdAt }: Todo =
   //   await res.json();
-  const todo = getTodoById(slug);
+  const todo = await getTodoById(slug);
 
   if (!todo) {
     notFound();

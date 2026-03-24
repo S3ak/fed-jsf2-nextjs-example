@@ -112,6 +112,30 @@ export async function createTodo(input: Todo): Promise<Todo> {
   return createdTodo;
 }
 
+export async function getTodoById(id: string): Promise<Todo | null> {
+  "use server";
+
+  isDBConnected();
+
+  const rows = (await sql`
+    SELECT
+      id,
+      title,
+      description,
+      due_date AS "dueDate",
+      priority,
+      is_completed AS "isCompleted",
+      author_id AS "authorId",
+      created_at AS "createdAt",
+      updated_at AS "updatedAt"
+    FROM todos
+    WHERE id = ${id}
+    LIMIT 1
+  `) as Todo[];
+
+  return rows[0] ?? null;
+}
+
 async function _updateTask(formData: FormData) {
   "use server";
 
