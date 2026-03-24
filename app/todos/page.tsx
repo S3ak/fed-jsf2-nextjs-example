@@ -9,12 +9,7 @@ import { getTodos } from "@/lib/data/neon";
 export const dynamic = "force-dynamic";
 
 export default async function TodosPage() {
-  const todosPromise = getTodos().then((todos) =>
-    todos.map((todo) => ({
-      ...todo,
-      description: todo.description ?? undefined,
-    })),
-  );
+  const todosPromise = getTodos();
 
   return (
     <div className="min-h-screen bg-zinc-50 px-4 py-10 dark:bg-black sm:px-6 lg:px-8">

@@ -4,17 +4,6 @@ import { TodoSchema, type Todo } from "@/lib/types/todo";
 
 export const sql = neon(process.env.DATABASE_URL!);
 
-type TodoRow = Omit<Todo, "description"> & {
-  description: string | null;
-};
-
-function ensureDescription(todo: TodoRow): Todo {
-  return TodoSchema.parse({
-    ...todo,
-    description: todo.description ?? undefined,
-  });
-}
-
 export async function createComment(formData: FormData) {
   "use server";
   const comment = formData.get("comment") as string;
@@ -60,7 +49,7 @@ export async function getTodos() {
       updated_at AS "updatedAt"
     FROM todos
     ORDER BY created_at DESC
-  `) as TodoRow[];
+  `) as Todo[];
 
   return rows;
 }
@@ -100,7 +89,7 @@ export async function createTodo(input: Todo): Promise<Todo> {
     ) VALUES (
       ${todo.id},
       ${todo.title},
-      ${todo.description ?? ""},
+      ${todo.description ?? null},
       ${todo.dueDate},
       ${todo.priority},
       ${todo.isCompleted},
@@ -118,9 +107,9 @@ export async function createTodo(input: Todo): Promise<Todo> {
       author_id AS "authorId",
       created_at AS "createdAt",
       updated_at AS "updatedAt"
-  `) as TodoRow[];
+  `) as Todo[];
 
-  return ensureDescription(createdTodo);
+  return createdTodo;
 }
 
 async function _updateTask(formData: FormData) {
