@@ -4,6 +4,17 @@ import { TodoSchema, type Todo } from "@/lib/types/todo";
 
 export const sql = neon(process.env.DATABASE_URL!);
 
+type TodoRow = Omit<Todo, "description"> & {
+  description: string | null;
+};
+
+function ensureDescription(todo: TodoRow): Todo {
+  return TodoSchema.parse({
+    ...todo,
+    description: todo.description ?? undefined,
+  });
+}
+
 export async function createComment(formData: FormData) {
   "use server";
   const comment = formData.get("comment") as string;
@@ -15,6 +26,43 @@ export async function getComments() {
   await sql`CREATE TABLE IF NOT EXISTS comments (id SERIAL PRIMARY KEY, comment TEXT)`;
   const comments = await sql`SELECT * FROM comments`;
   return comments;
+}
+
+export async function getTodos() {
+  "use server";
+
+  isDBConnected();
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS todos (
+      id UUID PRIMARY KEY,
+      title TEXT NOT NULL,
+      description TEXT,
+      due_date TIMESTAMPTZ NOT NULL,
+      priority TEXT NOT NULL,
+      is_completed BOOLEAN NOT NULL DEFAULT FALSE,
+      author_id UUID NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL,
+      updated_at TIMESTAMPTZ NOT NULL
+    )
+  `;
+
+  const rows = (await sql`
+    SELECT
+      id,
+      title,
+      description,
+      due_date AS "dueDate",
+      priority,
+      is_completed AS "isCompleted",
+      author_id AS "authorId",
+      created_at AS "createdAt",
+      updated_at AS "updatedAt"
+    FROM todos
+    ORDER BY created_at DESC
+  `) as TodoRow[];
+
+  return rows;
 }
 
 export async function createTodo(input: Todo): Promise<Todo> {
@@ -38,7 +86,7 @@ export async function createTodo(input: Todo): Promise<Todo> {
     )
   `;
 
-  const [createdTodo] = await sql`
+  const [createdTodo] = (await sql`
     INSERT INTO todos (
       id,
       title,
@@ -52,7 +100,7 @@ export async function createTodo(input: Todo): Promise<Todo> {
     ) VALUES (
       ${todo.id},
       ${todo.title},
-      ${todo.description ?? null},
+      ${todo.description ?? ""},
       ${todo.dueDate},
       ${todo.priority},
       ${todo.isCompleted},
@@ -70,11 +118,9 @@ export async function createTodo(input: Todo): Promise<Todo> {
       author_id AS "authorId",
       created_at AS "createdAt",
       updated_at AS "updatedAt"
-  `;
+  `) as TodoRow[];
 
-  console.log("returned data from neon db", createdTodo);
-
-  return TodoSchema.parse(createdTodo);
+  return ensureDescription(createdTodo);
 }
 
 async function _updateTask(formData: FormData) {
