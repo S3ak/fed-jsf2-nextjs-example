@@ -12,7 +12,8 @@ import {
   MutateTodoFormSchemaType,
 } from "@/lib/types/todo";
 import z from "zod";
-import { addTodo, getTodos, updateTodoById } from "@/lib/data/todo-store-local";
+import { getTodos, updateTodoById } from "@/lib/data/todo-store-local";
+import { createTodo } from "@/lib/data/neon";
 
 export async function getTodosAction() {
   return {
@@ -62,8 +63,7 @@ export async function createTodoAction(
     //   body: formValues,
     // });
 
-    const response = addTodo(todo);
-
+    await createTodo(todo);
     // if (!response.ok) {
     //   throw new Error("Failed to create todo");
     // }
@@ -75,7 +75,12 @@ export async function createTodoAction(
     return { success: true };
   } catch (error) {
     console.error("Error creating todo:", error);
-    throw new Error("Failed to create todo");
+    return {
+      success: false,
+      errors: {
+        title: ["Something went wrong while creating the todo."],
+      },
+    };
   }
 }
 

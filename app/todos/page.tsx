@@ -4,10 +4,13 @@ import TodoList from "@/components/todo-list/TodoList";
 import { TodoListSkeleton } from "@/components/todo-list/TodoListUI";
 import CreateTodoForm from "@/components/create-todo/CreateTodoForm";
 import { createTodoAction } from "./actions";
+import { getTodos } from "@/lib/data/neon";
 
 export const dynamic = "force-dynamic";
 
 export default async function TodosPage() {
+  const todosPromise = getTodos();
+
   return (
     <div className="min-h-screen bg-zinc-50 px-4 py-10 dark:bg-black sm:px-6 lg:px-8">
       <main className="mx-auto flex w-full max-w-4xl flex-col gap-8">
@@ -52,7 +55,7 @@ export default async function TodosPage() {
 
           <div className="mt-4 space-y-3">
             <Suspense fallback={<TodoListSkeleton />}>
-              <TodoList />
+              <TodoList todosPromise={todosPromise} />
             </Suspense>
           </div>
         </section>
