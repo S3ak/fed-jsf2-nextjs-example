@@ -1,4 +1,10 @@
 import z from "zod";
+import {
+  TODO_TITLE_MAX_LENGTH,
+  TODO_TITLE_MIN_LENGTH,
+  todoPriority,
+  type TodoSelect,
+} from "@/lib/schema";
 
 const DueDateSchema = z
   .string()
@@ -14,14 +20,14 @@ export const TodoSchema = z.object({
   isCompleted: z.boolean().default(false),
   title: z
     .string()
-    .min(2, "Title must be at least 2 characters")
-    .max(100, "Title must not exceed 100 characters"),
+    .min(TODO_TITLE_MIN_LENGTH, "Title must be at least 2 characters")
+    .max(TODO_TITLE_MAX_LENGTH, "Title must not exceed 100 characters"),
   description: z
     .string()
-    .min(2, "Title must be at least 2 characters")
+    .min(TODO_TITLE_MIN_LENGTH, "Title must be at least 2 characters")
     .optional(),
   dueDate: DueDateSchema,
-  priority: z.enum(["low", "medium", "high"]).default("low"),
+  priority: z.enum(todoPriority.enumValues).default("low"),
   authorId: z.uuid(),
 });
 
@@ -66,7 +72,9 @@ export type MutateTodoActionResult = {
   errors?: unknown;
 };
 
-export type Todo = z.infer<typeof TodoSchema>;
+export type Todo = Omit<TodoSelect, "description"> & {
+  description?: string;
+};
 
 export interface TodoResponse {
   data: Todo[];
