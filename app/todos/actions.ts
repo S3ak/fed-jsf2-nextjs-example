@@ -12,13 +12,14 @@ import {
   MutateTodoFormSchemaType,
 } from "@/lib/types/todo";
 import z from "zod";
-import { getTodos, updateTodoById } from "@/lib/data/todo-store-local";
+import { updateTodoById } from "@/lib/data/todo-store-local";
 import { createTodo } from "@/lib/data/neon";
+import { fetchTodos } from "@/lib/data";
 
 export async function getTodosAction() {
   return {
     success: true,
-    todo: getTodos(),
+    todos: await fetchTodos(),
   };
 }
 

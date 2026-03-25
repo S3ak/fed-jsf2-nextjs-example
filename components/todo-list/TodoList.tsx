@@ -1,17 +1,18 @@
-import { Todo } from "@/lib/types/todo";
-import TodoListUI from "./TodoListUI";
-import { Card } from "../ui/card";
-import { toggleTaskIsCompleteAction } from "@/app/todos/actions";
 import { use } from "react";
+import { TodoSelect } from "@/lib/schema";
+import { toggleTaskIsCompleteAction } from "@/app/todos/actions";
+import { Card } from "../ui/card";
+import TodoListUI from "./TodoListUI";
 
 type TodoListProps = {
-  todosPromise: Promise<Todo[]>;
+  todosPromise: Promise<TodoSelect[]>;
 };
 
 export default function TodoList({ todosPromise }: TodoListProps) {
   const todos = use(todosPromise);
 
   const sortedTodos = [...todos].sort((a, b) => {
+    // FIXME: Drizzle should auto convert
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
 

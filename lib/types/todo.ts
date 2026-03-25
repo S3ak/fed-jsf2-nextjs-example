@@ -1,10 +1,11 @@
 import z from "zod";
+import { type TodoSelect, todosTable } from "@/lib/schema";
 import {
-  TODO_TITLE_MAX_LENGTH,
-  TODO_TITLE_MIN_LENGTH,
-  todoPriority,
-  type TodoSelect,
-} from "@/lib/schema";
+  createInsertSchema,
+  createSelectSchema,
+  createUpdateSchema,
+} from "drizzle-orm/effect-schema";
+// NOTE: https://orm.drizzle.team/docs/effect-schema
 
 const DueDateSchema = z
   .string()
@@ -13,23 +14,16 @@ const DueDateSchema = z
   })
   .transform((value) => new Date(value).toISOString());
 
-export const TodoSchema = z.object({
-  id: z.uuid(),
-  createdAt: z.iso.datetime(),
-  updatedAt: z.iso.datetime(),
-  isCompleted: z.boolean().default(false),
-  title: z
-    .string()
-    .min(TODO_TITLE_MIN_LENGTH, "Title must be at least 2 characters")
-    .max(TODO_TITLE_MAX_LENGTH, "Title must not exceed 100 characters"),
-  description: z
-    .string()
-    .min(TODO_TITLE_MIN_LENGTH, "Title must be at least 2 characters")
-    .optional(),
-  dueDate: DueDateSchema,
-  priority: z.enum(todoPriority.enumValues).default("low"),
-  authorId: z.uuid(),
-});
+export const TodoSchema = createSelectSchema(todosTable);
+
+// Schema for inserting a user - can be used to validate API requests
+const TodoInsert = createInsertSchema(todosTable);
+
+// Schema for updating a Todo - can be used to validate API requests
+const TodoUpdate = createUpdateSchema(todosTable);
+
+// Schema for selecting a Todo - can be used to validate API responses
+const TodoSelect = createSelectSchema(todosTable);
 
 export const CreateTodoFormDataSchema = TodoSchema.pick({
   title: true,

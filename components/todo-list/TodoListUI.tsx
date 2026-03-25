@@ -5,9 +5,10 @@ import TodoListItem from "../todo-list-item/TodoListItem";
 import { MutateTodoActionResult, Todo } from "@/lib/types/todo";
 import { Card, CardFooter, CardHeader } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
+import { TodoSelect } from "@/lib/schema";
 
 type TodoListUIProps = {
-  todos: Todo[];
+  todos: TodoSelect[];
   handleToggleIsCompleteAction: (
     data: FormData,
   ) => Promise<MutateTodoActionResult>;

@@ -8,6 +8,13 @@
       "when": 1774360920791,
       "tag": "0000_sticky_kitty_pryde",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1774442954457,
+      "tag": "0001_cynical_victor_mancha",
+      "breakpoints": true
     }
   ]
 }

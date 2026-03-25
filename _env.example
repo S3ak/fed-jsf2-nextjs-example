@@ -1,9 +1,11 @@
 NEXT_PUBLIC_API_MOCKING=disabled
 # Recommended for most uses
-DATABASE_URL=
+DATABASE_URL=postgresql://[PGUSER]:[PGPASSWORD]@[POSTGRES_HOST]?sslmode=require
+BACKEND_API=
+GOOGLE_CALLBACK_URL=
 
-# For uses requiring a connection without pgbouncer
-DATABASE_URL_UNPOOLED=
+# For uses requiring a connection without pgbouncer`[]` means replace including square brackets.
+DATABASE_URL_UNPOOLED=postgresql://[PGUSER]:[PGPASSWORD]@[POSTGRES_HOST]?sslmode=require
 
 # Parameters for constructing your own connection string
 PGHOST=ep-lucky-thunder-alfhipda-pooler.c-3.eu-central-1.aws.neon.tech
@@ -13,6 +15,7 @@ PGDATABASE=neondb
 PGPASSWORD=
 
 # Parameters for Vercel Postgres Templates
+# NEVER COMMIT the actual URL with the password included. 
 POSTGRES_URL=
 POSTGRES_URL_NON_POOLING=
 POSTGRES_USER=neondb_owner
@@ -20,4 +23,6 @@ POSTGRES_HOST=ep-lucky-thunder-alfhipda-pooler.c-3.eu-central-1.aws.neon.tech
 POSTGRES_PASSWORD=
 POSTGRES_DATABASE=neondb
 POSTGRES_URL_NO_SSL=
-POSTGRES_PRISMA_URL=
+
+TEST_USER_EMAIL=email@mail.com
+TEST_USER_PASSWORD=Pa55W0rd1!canbecool
