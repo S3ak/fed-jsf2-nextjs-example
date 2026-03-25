@@ -43,20 +43,13 @@ export const todosTable = table(
       .default(default_title),
     description: t.text("description"),
     priority: todoPriority("priority").notNull().default("low"),
-    authorId: t
-      .uuid("author_id")
-      .notNull()
-      .default("test_user_id_" + sql`gen_random_uuid()`),
+    authorId: t.uuid("author_id").notNull(),
     ...timestamps,
   },
   (table) => [
     t.check(
       "todos_title_len_check",
       sql`char_length(${table.title}) >= ${TODO_DEFAULT_MIN_LENGTH}`,
-    ),
-    t.check(
-      "todos_description_len_check",
-      sql`${table.description} is null or char_length(${table.description}) >= ${TODO_DEFAULT_MIN_LENGTH}`,
     ),
   ],
 );

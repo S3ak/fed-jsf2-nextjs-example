@@ -2,7 +2,7 @@
 
 // import { motion } from "motion/react";
 import TodoListItem from "../todo-list-item/TodoListItem";
-import { MutateTodoActionResult, Todo } from "@/lib/types/todo";
+import { MutateTodoActionResult } from "@/lib/types/todo";
 import { Card, CardFooter, CardHeader } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
 import { TodoSelect } from "@/lib/schema";
@@ -43,35 +43,17 @@ export default function TodoListUI({
       // initial="hidden"
       // animate="visible"
     >
-      {todos.map(
-        ({
-          id,
-          title,
-          priority,
-          dueDate,
-          isCompleted,
-          createdAt,
-          updatedAt,
-          authorId,
-        }) => (
-          <div
-            key={id}
-            //  variants={itemVariants}
-          >
-            <TodoListItem
-              id={id}
-              title={title}
-              priority={priority}
-              dueDate={dueDate}
-              isCompleted={isCompleted}
-              createdAt={createdAt}
-              updatedAt={updatedAt}
-              authorId={authorId}
-              onToggleIsComplete={handleToggleIsCompleteAction}
-            />
-          </div>
-        ),
-      )}
+      {todos.map((todo) => (
+        <div
+          key={todo.id}
+          //  variants={itemVariants}
+        >
+          <TodoListItem
+            {...todo}
+            onToggleIsComplete={handleToggleIsCompleteAction}
+          />
+        </div>
+      ))}
     </section>
   );
 }

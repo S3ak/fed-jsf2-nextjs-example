@@ -1,21 +1,21 @@
 import todos from "@/data/todos.json";
 import fs from "node:fs";
 import path from "node:path";
-import { Todo } from "@/lib/types/todo";
+import type { TodoSelect } from "@/lib/schema";
 
 type TodoStoreShape = {
-  data: Todo[];
+  data: TodoSelect[];
 };
 
 const TODOS_DB_FILE = path.join(process.cwd(), "lib", "data", "todos.json");
 
-function cloneTodos(items: Todo[]): Todo[] {
+function cloneTodos(items: TodoSelect[]): TodoSelect[] {
   return items.map((todo) => ({ ...todo }));
 }
 
 function getSeedStore(): TodoStoreShape {
   return {
-    data: cloneTodos(todos.data as Todo[]),
+    data: cloneTodos(todos.data as TodoSelect[]),
   };
 }
 
@@ -62,7 +62,7 @@ export function getTodoById(id: string) {
   return readStore().data.find((todo) => todo.id.toString() === id);
 }
 
-export function addTodo(todo: Todo) {
+export function addTodo(todo: TodoSelect) {
   const store = readStore();
   const nextTodos = [...store.data, todo];
 
@@ -71,7 +71,10 @@ export function addTodo(todo: Todo) {
   return cloneTodos(nextTodos);
 }
 
-export function updateTodoById(id: string, updates: Partial<Todo>): Todo[] {
+export function updateTodoById(
+  id: string,
+  updates: Partial<TodoSelect>,
+): TodoSelect[] {
   const store = readStore();
   const nextTodos = store.data.map((todo) => {
     if (todo.id.toString() !== id) {

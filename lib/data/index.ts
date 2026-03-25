@@ -1,5 +1,6 @@
 import { API_URL } from "../constants";
-import { Todo, TodoResponse } from "../types/todo";
+import type { TodoResponse } from "../types/todo";
+import type { TodoSelect } from "../schema";
 import { updateTodoById } from "./todo-store-local";
 
 export async function fetchTodos() {
@@ -23,7 +24,7 @@ export async function fetchTodos() {
   }
 }
 
-export async function createTodo(todo: Todo) {
+export async function createTodo(todo: TodoSelect) {
   try {
     const res = await fetch(`${API_URL}/todos`, {
       method: "POST",
@@ -43,7 +44,7 @@ export async function createTodo(todo: Todo) {
   }
 }
 
-export async function mutateTodo(id: string, todo: Partial<Todo>) {
+export async function mutateTodo(id: string, todo: Partial<TodoSelect>) {
   try {
     // const res = await fetch(`${API_URL}/todos/${id}`, {
     //   method: "PATCH",

@@ -13,8 +13,8 @@ import { Button } from "../ui/button";
 import {
   MutateTodoActionResult,
   OverrideMutateTodoFormSchema,
-  Todo,
 } from "@/lib/types/todo";
+import type { TodoSelect } from "@/lib/schema";
 import { DateTime } from "luxon";
 import { useState } from "react";
 
@@ -51,7 +51,7 @@ export default function CardDetail({
   priority,
   isCompleted,
   mutateTodoAction,
-}: Todo & IProps) {
+}: TodoSelect & IProps) {
   const formattedDateTime = DateTime.fromISO(dueDate);
   const [isEditMode, setIsEditMode] = useState(false);
   const form = useForm({
@@ -181,7 +181,7 @@ export default function CardDetail({
                           <SelectTrigger
                             id="priority"
                             aria-invalid={fieldState.invalid}
-                            className="min-w-[120px]"
+                            className="min-w-30"
                           >
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>

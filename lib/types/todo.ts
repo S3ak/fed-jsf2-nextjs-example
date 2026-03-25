@@ -1,11 +1,11 @@
 import z from "zod";
-import { type TodoSelect, todosTable } from "@/lib/schema";
 import {
-  createInsertSchema,
-  createSelectSchema,
-  createUpdateSchema,
-} from "drizzle-orm/effect-schema";
-// NOTE: https://orm.drizzle.team/docs/effect-schema
+  TODO_DEFAULT_MIN_LENGTH,
+  TODO_TITLE_MAX_LENGTH,
+  todoPriority,
+  type TodoInsert,
+  type TodoSelect,
+} from "@/lib/schema";
 
 const DueDateSchema = z
   .string()
@@ -14,16 +14,31 @@ const DueDateSchema = z
   })
   .transform((value) => new Date(value).toISOString());
 
-export const TodoSchema = createSelectSchema(todosTable);
+const TodoPrioritySchema = z.enum(todoPriority.enumValues);
 
-// Schema for inserting a user - can be used to validate API requests
-const TodoInsert = createInsertSchema(todosTable);
-
-// Schema for updating a Todo - can be used to validate API requests
-const TodoUpdate = createUpdateSchema(todosTable);
-
-// Schema for selecting a Todo - can be used to validate API responses
-const TodoSelect = createSelectSchema(todosTable);
+export const TodoSchema = z.object({
+  id: z.uuid(),
+  slug: z.string().nullable().optional(),
+  dueDate: DueDateSchema,
+  isCompleted: z.boolean().default(false),
+  title: z
+    .string()
+    .min(TODO_DEFAULT_MIN_LENGTH, "Title must be at least 2 characters")
+    .max(
+      TODO_TITLE_MAX_LENGTH,
+      `Title must not exceed ${TODO_TITLE_MAX_LENGTH} characters`,
+    ),
+  description: z
+    .string()
+    .min(TODO_DEFAULT_MIN_LENGTH, "Description must be at least 2 characters")
+    .nullable()
+    .optional(),
+  priority: TodoPrioritySchema.default("low"),
+  authorId: z.uuid(),
+  updatedAt: z.iso.datetime().optional(),
+  createdAt: z.iso.datetime().optional(),
+  deletedAt: z.iso.datetime().optional(),
+});
 
 export const CreateTodoFormDataSchema = TodoSchema.pick({
   title: true,
@@ -66,12 +81,8 @@ export type MutateTodoActionResult = {
   errors?: unknown;
 };
 
-export type Todo = Omit<TodoSelect, "description"> & {
-  description?: string;
-};
-
 export interface TodoResponse {
-  data: Todo[];
+  data: TodoSelect[];
 }
 
 export type createTodoFormData = z.infer<typeof CreateTodoFormDataSchema>;

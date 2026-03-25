@@ -15,6 +15,13 @@
       "when": 1774442954457,
       "tag": "0001_cynical_victor_mancha",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1774447200000,
+      "tag": "0002_fix_description_constraint",
+      "breakpoints": true
     }
   ]
 }

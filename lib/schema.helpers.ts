@@ -9,7 +9,7 @@ const timestampWithTimezone = (columnName: string) =>
     .defaultNow();
 
 export const timestamps = {
-  updated_at: timestampWithTimezone("updated_at"),
-  created_at: timestampWithTimezone("created_at"),
-  deleted_at: timestampWithTimezone("deleted_at"),
+  updatedAt: timestampWithTimezone("updated_at"),
+  createdAt: timestampWithTimezone("created_at"),
+  deletedAt: timestampWithTimezone("deleted_at"),
 };

@@ -1,6 +1,7 @@
 import { neon } from "@neondatabase/serverless";
 import { revalidatePath } from "next/cache";
-import { TodoSchema, type Todo } from "@/lib/types/todo";
+import { TodoSchema } from "@/lib/types/todo";
+import type { TodoInsert, TodoSelect } from "@/lib/schema";
 
 export const sql = neon(process.env.DATABASE_URL!);
 
@@ -25,6 +26,7 @@ export async function getTodos() {
   await sql`
     CREATE TABLE IF NOT EXISTS todos (
       id UUID PRIMARY KEY,
+      slug TEXT,
       title TEXT NOT NULL,
       description TEXT,
       due_date TIMESTAMPTZ NOT NULL,
@@ -32,13 +34,15 @@ export async function getTodos() {
       is_completed BOOLEAN NOT NULL DEFAULT FALSE,
       author_id UUID NOT NULL,
       created_at TIMESTAMPTZ NOT NULL,
-      updated_at TIMESTAMPTZ NOT NULL
+      updated_at TIMESTAMPTZ NOT NULL,
+      deleted_at TIMESTAMPTZ NOT NULL
     )
   `;
 
   const rows = (await sql`
     SELECT
       id,
+      slug,
       title,
       description,
       due_date AS "dueDate",
@@ -46,15 +50,16 @@ export async function getTodos() {
       is_completed AS "isCompleted",
       author_id AS "authorId",
       created_at AS "createdAt",
-      updated_at AS "updatedAt"
+      updated_at AS "updatedAt",
+      deleted_at AS "deletedAt"
     FROM todos
     ORDER BY created_at DESC
-  `) as Todo[];
+  `) as TodoSelect[];
 
   return rows;
 }
 
-export async function createTodo(input: Todo): Promise<Todo> {
+export async function createTodo(input: TodoInsert): Promise<TodoSelect> {
   "use server";
 
   isDBConnected();
@@ -64,6 +69,7 @@ export async function createTodo(input: Todo): Promise<Todo> {
   await sql`
     CREATE TABLE IF NOT EXISTS todos (
       id UUID PRIMARY KEY,
+      slug TEXT,
       title TEXT NOT NULL,
       description TEXT,
       due_date TIMESTAMPTZ NOT NULL,
@@ -71,13 +77,15 @@ export async function createTodo(input: Todo): Promise<Todo> {
       is_completed BOOLEAN NOT NULL DEFAULT FALSE,
       author_id UUID NOT NULL,
       created_at TIMESTAMPTZ NOT NULL,
-      updated_at TIMESTAMPTZ NOT NULL
+      updated_at TIMESTAMPTZ NOT NULL,
+      deleted_at TIMESTAMPTZ NOT NULL
     )
   `;
 
   const [createdTodo] = (await sql`
     INSERT INTO todos (
       id,
+      slug,
       title,
       description,
       due_date,
@@ -85,20 +93,24 @@ export async function createTodo(input: Todo): Promise<Todo> {
       is_completed,
       author_id,
       created_at,
-      updated_at
+      updated_at,
+      deleted_at
     ) VALUES (
       ${todo.id},
+      ${todo.slug ?? null},
       ${todo.title},
       ${todo.description ?? null},
       ${todo.dueDate},
       ${todo.priority},
       ${todo.isCompleted},
       ${todo.authorId},
-      ${todo.createdAt},
-      ${todo.updatedAt}
+      ${todo.createdAt ?? new Date().toISOString()},
+      ${todo.updatedAt ?? new Date().toISOString()},
+      ${todo.deletedAt ?? new Date().toISOString()}
     )
     RETURNING
       id,
+      slug,
       title,
       description,
       due_date AS "dueDate",
@@ -106,13 +118,14 @@ export async function createTodo(input: Todo): Promise<Todo> {
       is_completed AS "isCompleted",
       author_id AS "authorId",
       created_at AS "createdAt",
-      updated_at AS "updatedAt"
-  `) as Todo[];
+      updated_at AS "updatedAt",
+      deleted_at AS "deletedAt"
+  `) as TodoSelect[];
 
   return createdTodo;
 }
 
-export async function getTodoById(id: string): Promise<Todo | null> {
+export async function getTodoById(id: string): Promise<TodoSelect | null> {
   "use server";
 
   isDBConnected();
@@ -120,6 +133,7 @@ export async function getTodoById(id: string): Promise<Todo | null> {
   const rows = (await sql`
     SELECT
       id,
+      slug,
       title,
       description,
       due_date AS "dueDate",
@@ -127,11 +141,12 @@ export async function getTodoById(id: string): Promise<Todo | null> {
       is_completed AS "isCompleted",
       author_id AS "authorId",
       created_at AS "createdAt",
-      updated_at AS "updatedAt"
+      updated_at AS "updatedAt",
+      deleted_at AS "deletedAt"
     FROM todos
     WHERE id = ${id}
     LIMIT 1
-  `) as Todo[];
+  `) as TodoSelect[];
 
   return rows[0] ?? null;
 }

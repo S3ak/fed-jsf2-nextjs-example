@@ -3,7 +3,6 @@ import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/neon-http";
 import { neon } from "@neondatabase/serverless";
 import { todosTable, type TodoInsert, type TodoSelect } from "../schema";
-import { Todo } from "../types/todo";
 import { PgSelectQueryBuilder } from "drizzle-orm/pg-core";
 
 const sql = neon(process.env.DATABASE_URL!);
@@ -17,20 +16,6 @@ function withPagination<T extends PgSelectQueryBuilder>(
   return qb.limit(pageSize).offset((page - 1) * pageSize);
 }
 
-function toTodo(row: TodoSelect): Todo {
-  return {
-    ...row,
-    description: row.description ?? undefined,
-  };
-}
-
-function toInsertTodo(todo: Todo): TodoInsert {
-  return {
-    ...todo,
-    description: todo.description ?? null,
-  };
-}
-
 export async function queryTodos() {
   "use server";
 
@@ -41,24 +26,22 @@ export async function queryTodos() {
   return todos;
 }
 
-export async function getTodoById(id: string): Promise<Todo | null> {
+export async function getTodoById(id: string): Promise<TodoSelect | null> {
   "use server";
 
   const rows = await db.select().from(todosTable).where(eq(todosTable.id, id));
   const row = rows[0];
 
-  return row ? toTodo(row) : null;
+  return row ?? null;
 }
 
-export async function createTodo(newTodo: Todo): Promise<Todo> {
+export async function createTodo(newTodo: TodoInsert): Promise<TodoSelect> {
   "use server";
-
-  const insertTodo = toInsertTodo(newTodo);
 
   const createdTodoRows = await db
     .insert(todosTable)
-    .values(insertTodo)
+    .values(newTodo)
     .returning();
 
-  return toTodo(createdTodoRows[0]);
+  return createdTodoRows[0];
 }

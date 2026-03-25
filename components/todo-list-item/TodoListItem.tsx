@@ -5,9 +5,9 @@ import Link from "next/link";
 import { DateTime } from "luxon";
 import type {
   MutateTodoActionResult,
-  Todo,
   ToggleTodoCompleteFormData,
 } from "@/lib/types/todo";
+import type { TodoSelect } from "@/lib/schema";
 import {
   Card,
   CardAction,
@@ -28,15 +28,11 @@ type IProps = {
 export default function TodoListItem({
   id,
   title,
-  description = "",
-  priority = "low",
+  priority,
   dueDate,
-  isCompleted: defaultIsCompleted = false,
-  createdAt,
-  updatedAt,
-  authorId,
+  isCompleted: defaultIsCompleted,
   onToggleIsComplete,
-}: Todo & IProps) {
+}: TodoSelect & IProps) {
   const formattedDateTime = DateTime.fromISO(dueDate);
   const checkboxId = `todo-complete-${id}`;
   const [isCompleted, setIsCompleted] = useState(defaultIsCompleted);
@@ -56,7 +52,7 @@ export default function TodoListItem({
     formData.append("id", String(updateTodoFormData.id));
     formData.append("isCompleted", String(updateTodoFormData.isCompleted));
 
-    const { success, errors } = await onToggleIsComplete(formData);
+    const { success } = await onToggleIsComplete(formData);
 
     if (!success) {
       setIsCompleted(previousValue);
