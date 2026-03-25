@@ -11,5 +11,8 @@ const timestampWithTimezone = (columnName: string) =>
 export const timestamps = {
   updatedAt: timestampWithTimezone("updated_at"),
   createdAt: timestampWithTimezone("created_at"),
-  deletedAt: timestampWithTimezone("deleted_at"),
+  deletedAt: timestamp("deleted_at", {
+    withTimezone: true,
+    mode: "string",
+  }),
 };
